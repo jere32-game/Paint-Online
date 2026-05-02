@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bucle Infinito - Voz a Loquendo</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            margin-top: 50px; 
+            background-color: #1e1e24; 
+            color: #ffffff; 
+        }
+        h1 { color: #44bba4; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2b2b36;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        button { 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            margin: 10px; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            border: none; 
+            font-weight: bold; 
+            transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.95); }
+        #btnStart { background-color: #4CAF50; color: white; }
+        #btnStop { background-color: #f44336; color: white; }
+        #status { 
+            font-size: 22px; 
+            margin-top: 25px; 
+            font-weight: bold; 
+            color: #e9b44c; 
+        }
+        #transcription { 
+            margin-top: 20px; 
+            font-size: 20px; 
+            font-style: italic; 
+            color: #9b9b9b; 
+            min-height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎙️ Emulador Loquendo Infinito 🤖</h1>
+        <p>Habla, espera a que te responda, y el micrófono se reactivará solo (sin ecos).</p>
+
+        <button id="btnStart">Iniciar Bucle</button>
+        <button id="btnStop">Detener</button>
+
+        <div id="status">Estado: Detenido. Presiona "Iniciar Bucle".</div>
+        <div id="transcription">...</div>
+    </div>
+
+    <script>
+        // La URL que solicitaste estrictamente
+        const urlBase = "https://cache-a.oddcast.com/tts/genC.php?EID=2&LID=2&VID=6&TXT={texto}&EXT=mp3&FNAME=&ACC=9066743&SceneID=2770522&HTTP_ERR=";
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            alert("Tu navegador no soporta reconocimiento de voz. Usa Google Chrome.");
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'es-ES'; 
+        recognition.interimResults = false; 
+        recognition.maxAlternatives = 1;
+
+        let isRunning = false;
+        let isProcessing = false; // CANDADO ANTI-BUGS
+
+        const btnStart = document.getElementById('btnStart');
+        const btnStop = document.getElementById('btnStop');
+        const statusDiv = document.getElementById('status');
+        const transcriptionDiv = document.getElementById('transcription');
+
+        btnStart.addEventListener('click', () => {
+            if (isRunning) return;
+            isRunning = true;
+            isProcessing = false;
+            try {
+                recognition.start();
+                statusDiv.innerText = "Estado: 🟢 Escuchando... ¡Habla!";
+            } catch(e) {
+                console.log("Iniciando...");
+            }
+        });
+
+        btnStop.addEventListener('click', () => {
+            isRunning = false;
+            isProcessing = false;
+            recognition.stop();
+            statusDiv.innerText = "Estado: 🔴 Detenido.";
+            transcriptionDiv.innerText = "...";
+        });
+
+        recognition.onresult = (event) => {
+            // Si ya estamos procesando un audio, bloqueamos cualquier otro sonido que entre
+            if (isProcessing) return; 
+            isProcessing = true; // Cerramos el candado
+
+            recognition.stop(); // Apagamos mic de inmediato
+
+            const transcript = event.results[0][0].transcript;
+            transcriptionDiv.innerText = `Tú: "${transcript}"`;
+            statusDiv.innerText = "Estado: ⏳ Generando Loquendo...";
+
+            const textoCodificado = encodeURIComponent(transcript);
+            const audioUrl = urlBase.replace("{texto}", textoCodificado);
+
+            const audio = new Audio(audioUrl);
+
+            audio.onended = () => {
+                // Esperamos 800ms antes de encender el micro para que el eco de tu cuarto se apague
+                setTimeout(() => {
+                    isProcessing = false; // Abrimos el candado
+                    if (isRunning) {
+                        try {
+                            recognition.start();
+                            statusDiv.innerText = "Estado: 🟢 Escuchando... ¡Habla!";
+                            transcriptionDiv.innerText = "...";
+                        } catch(e) {
+                            console.log("Reiniciando...");
+                        }
+                    }
+                }, 800); 
+            };
+
+            audio.play().catch(error => {
+                console.error("Error de reproducción:", error);
+                statusDiv.innerText = "Estado: ⚠️ Error de audio.";
+                
+                setTimeout(() => {
+                    isProcessing = false;
+                    if(isRunning) { try { recognition.start(); } catch(e){} }
+                }, 1000);
+            });
+        };
+
+        recognition.onend = () => {
+            // Solo lo reiniciamos si está corriendo y NO está ocupado con Loquendo
+            if (isRunning && !isProcessing) {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    // Ignorar error si ya estaba arrancando
+                }
+            }
+        };
+
+        recognition.onerror = (event) => {
+            if (event.error === 'not-allowed') {
+                isRunning = false;
+                isProcessing = false;
+                statusDiv.innerText = "Estado: ⛔ Permiso de micrófono denegado.";
+            }
+        };
+    </script>
+</body>
+</html>
