@@ -119,7 +119,7 @@
         <div class="quick-btn" title="Guardar">💾</div>
         <div class="quick-btn" title="Deshacer (Local)">↩️</div>
       </div>
-      <div class="title-text" id="window-title">Sin título: Paint (Server-Infinit)</div>
+      <div class="title-text" id="window-title">Sin título: Paint (Server-Infinit Aisaldo)</div>
     </div>
     <div style="display: flex; align-items: center;">
       <div id="network-status" title="Indicador de guardado en servidor">
@@ -135,7 +135,8 @@
 
   <div id="ribbon">
     <div id="ribbon-tabs">
-      <div class="tab tab-file">Archivo</div> <div class="tab active" id="tab-home-trigger">Inicio</div>
+      <div class="tab tab-file">Archivo</div>
+      <div class="tab active" id="tab-home-trigger">Inicio</div>
       <div class="tab" id="tab-view-trigger">Ver</div>
     </div>
     
@@ -213,7 +214,7 @@
     <div id="chat-sidebar">
       <div id="chat-header"><span>Chat de la Sala</span><span id="chat-room-name"></span></div>
       <div id="chat-messages">
-        <div style="text-align:center; color:#aaa; font-style:italic;">Bienvenido al chat. Sé respetuoso.</div>
+        <div style="text-align:center; color:#aaa; font-style:italic;">Bienvenido al chat aislado.</div>
       </div>
       <div id="chat-input-container">
         <input type="text" id="chat-input" placeholder="Escribe un mensaje...">
@@ -225,22 +226,22 @@
   <div id="status-bar">
     <div class="status-left">
       <div class="status-field">📍 <span id="coords-display">0, 0px</span></div>
-      <div class="status-field">💾 ServerInfinit: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
-      <div class="status-field">👤 Sala: <span id="room-display" style="font-weight:600;">-</span></div>
+      <div class="status-field">💾 DB Mágica: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
+      <div class="status-field">👤 Sala Actual: <span id="room-display" style="font-weight:600;">-</span></div>
     </div>
   </div>
 
   <div id="login-overlay">
     <div class="window-modal">
-      <div id="title-bar" style="border-radius: 4px 4px 0 0;"><div class="title-text">Conexión a la Sala Mágica</div></div>
+      <div id="title-bar" style="border-radius: 4px 4px 0 0;"><div class="title-text">Entrada con Aislamiento xd</div></div>
       <div class="modal-body">
         <label style="font-weight:600;">Tu Apodo:</label>
         <input type="text" id="net-username" class="modal-input" value="DibujantePro" maxlength="15">
         
-        <label style="font-weight:600;">Sala a Entrar (Crea la base de datos de esa sala):</label>
+        <label style="font-weight:600;">Nombre de la Sala (Aisla la DB y el Chat):</label>
         <input type="text" id="net-room" class="modal-input" value="sala_epica_1">
         
-        <button id="btn-connect" class="modal-btn" style="margin-top:8px;">Descargar Dibujo y Entrar</button>
+        <button id="btn-connect" class="modal-btn" style="margin-top:8px;">Conectar a Sala Aislada</button>
       </div>
     </div>
   </div>
@@ -261,8 +262,8 @@
       isDrawing: false,
       startX: 0, startY: 0,
       username: '', room: '',
-      isCanvasDirty: false, // Detecta si hubo cambios que requieran guardado
-      isSavingProcessActive: false // Evita doble guardado simultáneo
+      isCanvasDirty: false,
+      isSavingProcessActive: false
     };
 
     const win7Colors = ['#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8', '#3f48cc', '#a349a4', '#ffffff', '#c3c3c3', '#b5e61d', '#ffc90e', '#ffeaec', '#efe4b0', '#b5e61d', '#7092be', '#c8bfe7', '#ffffff'];
@@ -311,9 +312,7 @@
     }
 
     // ── LÓGICA DE DIBUJO ──
-    function markCanvasDirty() {
-      state.isCanvasDirty = true;
-    }
+    function markCanvasDirty() { state.isCanvasDirty = true; }
 
     function drawLineLocal(x0, y0, x1, y1, color, size, isEraser = false) {
       ctx.beginPath(); ctx.lineWidth = size; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -396,7 +395,7 @@
     };
     canvas.onmouseleave = () => state.isDrawing = false;
 
-    // ── INTERCONEXIÓN CLOUD32 (CURSORES Y DIBUJO EN VIVO) Y CHAT ──
+    // ── INTERCONEXIÓN AISLADA CLOUD32 (EL TRUCO xd) ──
     class Cloud32NetworkClient {
       constructor() { this.ws = null; this.connected = false; this.remoteCursors = {}; }
       connect(user, room) {
@@ -410,7 +409,7 @@
           document.getElementById('network-text').innerText = `En línea`;
           document.getElementById('window-title').innerText = `${room} - Paint Infinit`;
           this._send({ cmd: 'setid', val: state.username });
-          this._send({ cmd: 'link', val: [state.room] });
+          this._send({ cmd: 'link', val: [state.room] }); // Intento normal del server
         };
         this.ws.onmessage = (evt) => {
           try {
@@ -419,8 +418,12 @@
             if (msg.cmd === 'gmsg') {
               const sender = msg.origin?.username || 'Invitado';
               if (sender === state.username) return;
+              
               const p = JSON.parse(msg.val);
               
+              // EL TRUCO ESTÁ AQUÍ: Si el paquete no tiene tu misma sala, lo ignoramos por completo
+              if (p.room !== state.room) return; 
+
               if (p.n7_action === 'cursor') { this.syncCursor(sender, p.x, p.y); }
               else if (p.n7_action === 'draw') {
                 const d = p.data;
@@ -439,9 +442,11 @@
         };
       }
       _send(obj) { if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(obj)); }
-      sendDrawAction(d) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'draw', data: d }) }); }
-      sendCursor(x, y) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'cursor', x, y }) }); }
-      sendChat(txt) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'chat', text: txt }) }); }
+      
+      // EL TRUCO ESTÁ AQUÍ TAMBIÉN: Añadimos `room: state.room` a todos los paquetes salientes
+      sendDrawAction(d) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'draw', room: state.room, data: d }) }); }
+      sendCursor(x, y) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'cursor', room: state.room, x, y }) }); }
+      sendChat(txt) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'chat', room: state.room, text: txt }) }); }
 
       syncCursor(user, x, y) {
         let node = this.remoteCursors[user];
@@ -474,16 +479,16 @@
     document.getElementById('btn-send-chat').onclick = handleSendChat;
     chatInput.onkeydown = (e) => { if(e.key === 'Enter') handleSendChat(); };
 
-    // ── LÓGICA DE PERSISTENCIA SERVER-INFINIT (GUARDADO POR LOTE TIMED) ──
+    // ── LÓGICA DE PERSISTENCIA SERVER-INFINIT (GUARDADO AISLADO) ──
     async function loadRoomImage(roomName) {
-      document.getElementById('btn-connect').innerText = "Descargando DB Mágica...";
+      document.getElementById('btn-connect').innerText = "Descargando DB Aislada...";
       try {
+        // EL TRUCO xd: Leer usando el nombre de la sala como variable de base de datos
         const res = await fetch(INFINIT_URL + 'get.php', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${roomName}` })
         });
         const d = await res.json();
-        // Si hay data subida previamente
         if (d.success && d.data && d.data.value) {
           const url = d.data.value;
           if (url.startsWith('http')) {
@@ -495,39 +500,35 @@
         }
       } catch (e) { console.error("Error al cargar db:", e); }
       document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('btn-connect').innerText = "Descargar Dibujo y Entrar";
+      document.getElementById('btn-connect').innerText = "Conectar a Sala Aislada";
     }
 
     async function saveRoomImage() {
       if (state.isSavingProcessActive || !state.isCanvasDirty || !state.room) return;
       
       state.isSavingProcessActive = true;
-      state.isCanvasDirty = false; // Reset para el siguiente ciclo
+      state.isCanvasDirty = false;
       
       document.getElementById('status-indicator').className = 'status-dot saving';
-      document.getElementById('db-status').innerText = 'Guardando en YYF...';
+      document.getElementById('db-status').innerText = 'Guardando DB...';
       
       try {
-        // 1. Obtener imagen en BLOB (Para evitar strings pesadas que rompen el navegador)
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const fd = new FormData(); fd.append('file', blob, 'master_canvas.png');
         
-        // 2. Subir a YeetYourFiles para conseguir el LINK directo
         const yyfRes = await fetch(YYF_UPLOAD, { method: 'POST', body: fd });
         const yyfData = await yyfRes.json();
-        const masterLink = 'https://yyf.mubilop.com' + yyfData.fileUrl;
         
-        document.getElementById('db-status').innerText = 'Guardando Llave...';
-
-        // 3. Escribir el LINK en Ikelene bajo la llave de la sala
+        // EL TRUCO xd: El link puro en vez del Data URL (así no se crashea el navegador), escrito en la variable de la sala.
+        const masterLink = 'https://yyf.mubilop.com' + yyfData.fileUrl; 
+        
         await fetch(INFINIT_URL + 'store.php', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${state.room}`, value: masterLink, mimeType: 'text/plain' })
         });
         document.getElementById('db-status').innerText = 'Guardado OK';
       } catch(e) {
-        console.error("Fallo de guardado:", e);
-        state.isCanvasDirty = true; // Forzar reintento en el prox ciclo
+        state.isCanvasDirty = true;
         document.getElementById('db-status').innerText = 'Error al guardar';
       }
       
@@ -535,18 +536,17 @@
       setTimeout(() => { if(!state.isSavingProcessActive) document.getElementById('status-indicator').className = 'status-dot online'; }, 1000);
     }
 
-    // Cronómetro Anti-Spam: Solo ejecuta la rutina de guardado si han pasado 2 segundos (mayor a tu regla de 1.5s) y si hubo cambios
     setInterval(saveRoomImage, 2000);
 
-    // Evento Formulario Principal
+    // Evento Formulario
     document.getElementById('btn-connect').onclick = async () => {
       const user = document.getElementById('net-username').value.trim();
       const room = document.getElementById('net-room').value.trim();
       if (!user || !room) { alert("Completa los datos crack."); return; }
       
-      executeClear(); // Limpiamos fondo
-      await loadRoomImage(room); // Esperamos a que baje el mapa viejo (la variable vinculada a la sala)
-      network.connect(user, room); // Lanzamos el realtime socket
+      executeClear(); 
+      await loadRoomImage(room);
+      network.connect(user, room);
     };
 
     executeClear();
