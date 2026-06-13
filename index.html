@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sin título: Paint (Server-Infinit + Chat + Móvil)</title>
+  <title>Paint Infinit Ultimate (Windows 7 Edition)</title>
   <style>
-    /* ── DISEÑO DE INTERFAZ INTEGRAL AERO / WINDOWS 7 ── */
+    /* ── DISEÑO AERO / WINDOWS 7 + NUEVAS FUNCIONES ── */
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 12px; background: #eed; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
-    /* Barra de Título Aero */
-    #title-bar { background: linear-gradient(to bottom, #ebf3fe 0%, #cfe0f7 40%, #b9d2f3 100%); height: 32px; border-bottom: 1px solid #90a8c6; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; position: relative; flex-shrink: 0; }
+    #title-bar { background: linear-gradient(to bottom, #ebf3fe 0%, #cfe0f7 40%, #b9d2f3 100%); height: 32px; border-bottom: 1px solid #90a8c6; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; flex-shrink: 0; }
     .title-left-group { display: flex; align-items: center; gap: 4px; }
     .title-icon { width: 16px; height: 16px; background: url('https://win7games.com/images/paint.png') no-repeat center/contain; margin-right: 4px; }
     
-    .quick-access-bar { display: flex; align-items: center; gap: 6px; margin-right: 12px; padding-right: 8px; border-right: 1px solid rgba(0,0,0,0.15); }
+    .quick-access-bar { display: flex; align-items: center; gap: 4px; margin-right: 10px; padding-right: 8px; border-right: 1px solid rgba(0,0,0,0.15); }
     .quick-btn { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; border: 1px solid transparent; font-size: 13px; }
     .quick-btn:hover { background: rgba(255,255,255,0.6); border-color: #a0b0c5; }
-    .title-text { font-weight: 500; color: #1e395b; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+    .title-text { font-weight: 500; color: #1e395b; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
 
     .window-controls { display: flex; height: 100%; align-items: flex-start; }
     .win-btn { width: 45px; height: 22px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; font-size: 14px; font-family: monospace; color: #4c4c4c; cursor: pointer; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; }
@@ -30,19 +29,21 @@
     .status-dot.saving { background: #ffb900; box-shadow: 0 0 5px #ffb900; animation: pulse 1s infinite; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-    /* Estructura Ribbon */
     #ribbon { background: #f2f5f9; border-bottom: 1px solid #b9c9da; display: flex; flex-direction: column; position: relative; z-index: 100; flex-shrink: 0; }
     #ribbon-tabs { display: flex; padding-left: 4px; background: linear-gradient(to bottom, #f5f8fc, #e3ecf7); border-bottom: 1px solid #cbd9e9; height: 30px; align-items: flex-end; }
-    .tab { padding: 4px 16px; border: 1px solid transparent; border-bottom: none; border-top-left-radius: 4px; border-top-right-radius: 4px; color: #333; cursor: pointer; font-size: 12px; margin-bottom: -1px; height: 25px; display: flex; align-items: center; }
+    .tab { padding: 4px 16px; border: 1px solid transparent; border-bottom: none; border-top-left-radius: 4px; border-top-right-radius: 4px; color: #333; cursor: pointer; font-size: 12px; margin-bottom: -1px; height: 25px; display: flex; align-items: center; position: relative; }
     .tab:hover { background: rgba(255,255,255,0.5); }
     .tab.active { background: #f2f5f9; border-color: #b9c9da; border-bottom: 1px solid #f2f5f9; font-weight: bold; position: relative; z-index: 5; color: #000; }
     
-    .tab-file { display: none !important; } 
+    /* MENÚ ARCHIVO RECUPERADO */
+    .tab-file { background: linear-gradient(to bottom, #1b5fa7, #2679c1); color: white !important; font-weight: bold; border-radius: 2px; padding: 4px 14px; height: 24px; margin-right: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3); }
+    .tab-file:hover { background: linear-gradient(to bottom, #358be9, #236cb8); }
+    #file-menu { display: none; position: absolute; top: 30px; left: 0; background: #fdfdfd; border: 1px solid #96a9bd; box-shadow: 2px 3px 8px rgba(0,0,0,0.2); z-index: 1000; width: 200px; padding: 2px; flex-direction: column; }
+    .file-item { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .file-item:hover { background: #eaf2fb; outline: 1px solid #b8d6fb; }
 
-    /* Scroll horizontal en móviles para el menú Ribbon */
-    .ribbon-panel { display: none; height: 98px; padding: 4px; gap: 2px; background: linear-gradient(to bottom, #f5f8f9 0%, #e6ecf5 100%); overflow-x: auto; overflow-y: hidden; white-space: nowrap; }
+    .ribbon-panel { display: none; height: 105px; padding: 4px; gap: 2px; background: linear-gradient(to bottom, #f5f8f9 0%, #e6ecf5 100%); overflow-x: auto; overflow-y: hidden; white-space: nowrap; }
     .ribbon-panel.active { display: flex; }
-    /* Ocultar scrollbar visual pero mantener funcionalidad */
     .ribbon-panel::-webkit-scrollbar { height: 4px; }
     .ribbon-panel::-webkit-scrollbar-thumb { background: #b9c9da; border-radius: 4px; }
 
@@ -59,7 +60,7 @@
     .tool-btn-large:hover { background: #eaf2fb; border-color: #b8d6fb; }
     .tool-btn-large.active { background: #cce4f7; border-color: #a4c9eb; }
     .tool-btn-large .icon { font-size: 24px; line-height: 1; }
-    .tool-btn-large span { font-size: 11px; margin-top: 4px; color: #222; text-align: center; }
+    .tool-btn-large span { font-size: 10px; margin-top: 4px; color: #222; text-align: center; }
 
     #size-selector { display: flex; flex-direction: column; gap: 5px; width: 65px; padding: 4px; background: white; border: 1px solid #cbd5e1; border-radius: 2px; }
     .size-option { height: 12px; display: flex; align-items: center; cursor: pointer; padding: 2px; border: 1px solid transparent; width: 100%; }
@@ -74,57 +75,57 @@
     #color2-box { background: #ffffff; bottom: 0; right: 0; z-index: 5; }
     .color-preview-box.active { border: 2px solid #307ec9; z-index: 12; }
     
-    .color-grid { display: grid; grid-template-columns: repeat(10, 15px); grid-template-rows: repeat(2, 15px); gap: 3px; }
-    .color-cell { width: 15px; height: 15px; border: 1px solid #a0a0a0; cursor: pointer; border-radius: 1px; }
+    .color-grid { display: grid; grid-template-columns: repeat(12, 16px); grid-template-rows: repeat(2, 16px); gap: 3px; }
+    .color-cell { width: 16px; height: 16px; border: 1px solid #a0a0a0; cursor: pointer; border-radius: 1px; }
     .color-cell:hover { transform: scale(1.2); z-index: 20; box-shadow: 0 0 3px rgba(0,0,0,0.5); }
 
-    /* Entorno de Trabajo Dividido (Lienzo + Chat) */
+    /* MENU CURSORES PERSONALIZADOS */
+    .cursor-grid { display: grid; grid-template-columns: repeat(4, 28px); gap: 2px; }
+    .cursor-btn { font-size: 18px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid transparent; border-radius: 3px; }
+    .cursor-btn:hover { background: #eaf2fb; border-color: #b8d6fb; }
+    .cursor-btn.active { background: #cce4f7; border-color: #a4c9eb; }
+
     #main-content { display: flex; flex-grow: 1; overflow: hidden; flex-direction: row; }
 
     #workspace { flex-grow: 1; background: #cbd3e3; overflow: auto; display: flex; justify-content: flex-start; align-items: flex-start; padding: 15px; position: relative; }
     #canvas-container { background: white; box-shadow: 3px 3px 10px rgba(0,0,0,0.2); position: relative; border: 1px solid #6d7b93; display: inline-block; transform-origin: top left; transition: transform 0.1s ease-out; }
-    /* PROPIEDAD CLAVE: Evita que la pantalla haga scroll al dibujar en el móvil */
     canvas { display: block; cursor: crosshair; background: #ffffff; touch-action: none; }
 
-    /* Chat de la Sala */
     #chat-sidebar { width: 280px; background: #f0f4f9; border-left: 1px solid #b9c9da; display: flex; flex-direction: column; flex-shrink: 0; }
     #chat-header { background: linear-gradient(to bottom, #1b5fa7, #2679c1); color: white; padding: 6px 10px; font-weight: bold; font-size: 11px; display: flex; justify-content: space-between; }
     #chat-messages { flex-grow: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
     .msg-bubble { background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #d9e3f0; align-self: flex-start; max-width: 90%; word-wrap: break-word; }
     .msg-bubble.self { background: #dcf8c6; border-color: #c4e6b0; align-self: flex-end; }
     .msg-user { font-size: 9px; font-weight: bold; color: #1e395b; margin-bottom: 2px; }
-    #chat-input-container { padding: 8px; background: #e5edf6; border-top: 1px solid #d9e3f0; display:flex; gap:5px; }
+    #chat-input-container { padding: 8px; background: #e5edf6; border-top: 1px solid #d9e3f0; display:flex; gap:5px; flex-wrap: wrap; }
     #chat-input { flex-grow: 1; padding: 5px; border: 1px solid #b9c9da; border-radius: 2px; outline: none; }
-    #chat-input:focus { border-color: #2679c1; }
+    .emoji-btn { cursor: pointer; padding: 2px 4px; border: 1px solid #b9c9da; background: white; border-radius: 2px; }
 
-    /* Cursores Remotos */
+    /* CURSORES REMOTOS PERSONALIZADOS */
     #cursors-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
-    .remote-cursor { position: absolute; top: 0; left: 0; pointer-events: none; width: 14px; height: 20px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M4.5,2v17.5l4.8-4.7l3.6,8.2l3.2-1.4l-3.6-8.2h6L4.5,2z"/></svg>') no-repeat; z-index: 100000; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.4)); transform: translate3d(0, 0, 0); will-change: transform; transition: opacity 0.2s; }
-    .remote-label { position: absolute; top: 16px; left: 12px; background: #1e395b; color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 3px; white-space: nowrap; box-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+    .remote-cursor { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100000; transform: translate3d(0, 0, 0); will-change: transform; transition: opacity 0.2s; display: flex; flex-direction: column; align-items: flex-start; }
+    .remote-icon { font-size: 20px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transform: translate(-5px, -5px); }
+    .remote-label { background: rgba(30, 57, 91, 0.85); color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 3px; white-space: nowrap; margin-left: 10px; box-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
 
-    /* Barra de Estado Inferior */
     #status-bar { height: 24px; background: #f2f5f9; border-top: 1px solid #b9c9da; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: #333; font-size: 11px; z-index: 101; flex-shrink: 0; }
     .status-left { display: flex; align-items: center; gap: 15px; }
-    .status-field { display: flex; align-items: center; gap: 6px; border-right: 1px solid #d9e3f0; padding-right: 15px; min-width: 80px; }
-    
-    /* Login */
+    .status-field { display: flex; align-items: center; gap: 6px; border-right: 1px solid #d9e3f0; padding-right: 15px; }
+
     #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(180, 200, 220, 0.4); backdrop-filter: blur(2px); z-index: 999999; display: flex; align-items: center; justify-content: center; }
     .window-modal { background: #f0f0f0; border: 1px solid #666; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border-radius: 5px; width: 380px; max-width: 90%; overflow: hidden; display: flex; flex-direction: column; }
     .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
     .modal-input { padding: 6px 10px; border: 1px solid #abc; border-radius: 3px; font-family: inherit; font-size: 12px; }
-    .modal-input:focus { border-color: #358be9; outline: none; }
     .modal-btn { padding: 8px; background: linear-gradient(to bottom, #fafafa, #eaeaea); border: 1px solid #707070; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px; color: #111; }
 
-    /* ── RESPONSIVIDAD PARA TELÉFONOS MÓVILES ── */
     @media (max-width: 768px) {
       #main-content { flex-direction: column; }
-      #chat-sidebar { width: 100%; height: 250px; border-left: none; border-top: 1px solid #b9c9da; }
+      #chat-sidebar { width: 100%; height: 200px; border-left: none; border-top: 1px solid #b9c9da; }
       #workspace { padding: 5px; }
       .title-text { max-width: 100px; }
       #status-bar { height: auto; padding: 4px 10px; flex-wrap: wrap; }
       .status-left { flex-wrap: wrap; gap: 5px; }
       .status-field { border-right: none; padding-right: 5px; }
-      #network-status span { display: none; } /* Ocultar texto de red en móvil para ahorrar espacio */
+      #network-status span { display: none; }
     }
   </style>
 </head>
@@ -134,18 +135,19 @@
     <div class="title-left-group">
       <div class="title-icon"></div>
       <div class="quick-access-bar">
-        <div class="quick-btn" title="Guardar">💾</div>
-        <div class="quick-btn" title="Deshacer (Local)">↩️</div>
+        <div class="quick-btn" title="Descargar HD" onclick="downloadImage()">💾</div>
+        <div class="quick-btn" title="Limpiar" onclick="clearCanvasPrompt()">🗑️</div>
       </div>
-      <div class="title-text" id="window-title">Paint Infinit (Aislado)</div>
+      <div class="title-text" id="window-title">Paint Infinit (Ultimate Win7)</div>
     </div>
     <div style="display: flex; align-items: center;">
-      <div id="network-status" title="Indicador de guardado">
+      <div id="network-status" title="Estado de Guardado en Servidor">
         <div id="status-indicator" class="status-dot"></div>
         <span id="network-text">Desconectado</span>
         <span id="client-count-badge" style="font-weight:600; color:#1e395b;"></span>
       </div>
       <div class="window-controls">
+        <button class="win-btn" onclick="document.documentElement.requestFullscreen()">🗖</button>
         <button class="win-btn close-btn" onclick="location.reload();">X</button>
       </div>
     </div>
@@ -153,9 +155,14 @@
 
   <div id="ribbon">
     <div id="ribbon-tabs">
-      <div class="tab tab-file">Archivo</div>
+      <div class="tab tab-file" id="tab-file-trigger">Archivo</div>
+      <div id="file-menu">
+        <div class="file-item" onclick="downloadImage()">💾 Descargar a mi PC</div>
+        <div class="file-item" onclick="clearCanvasPrompt()">📄 Nuevo (Limpiar Sala)</div>
+        <div class="file-item" onclick="location.reload()">🚪 Cambiar de Sala</div>
+      </div>
       <div class="tab active" id="tab-home-trigger">Inicio</div>
-      <div class="tab" id="tab-view-trigger">Ver</div>
+      <div class="tab" id="tab-view-trigger">Ver / Cursores</div>
     </div>
     
     <div id="panel-home" class="ribbon-panel active">
@@ -163,11 +170,11 @@
         <div class="ribbon-controls">
           <div class="tool-grid">
             <button class="tool-grid-btn active" id="tool-pencil" title="Lápiz">✏️</button>
-            <button class="tool-grid-btn" id="tool-bucket" title="Relleno con color">🪣</button>
+            <button class="tool-grid-btn" id="tool-bucket" title="Relleno">🪣</button>
+            <button class="tool-grid-btn" id="tool-text" title="Añadir Texto">A</button>
             <button class="tool-grid-btn" id="tool-eraser" title="Borrador">🧽</button>
             <button class="tool-grid-btn" id="tool-picker" title="Selector de color">🧪</button>
-            <button class="tool-grid-btn" id="tool-line" title="Línea recta">📏</button>
-            <button class="tool-grid-btn" id="tool-clear" title="Borrar Lienzo" style="background:#fff0f0;">❌</button>
+            <button class="tool-grid-btn" id="tool-spray" title="Aerógrafo">💨</button>
           </div>
         </div>
         <div class="ribbon-group-title">Herramientas</div>
@@ -175,16 +182,16 @@
 
       <div class="ribbon-group">
         <div class="ribbon-controls">
-          <button class="tool-btn-large" id="shape-rect">
-            <div style="width:22px; height:16px; border:2px solid #333; margin:2px;"></div>
-            <span>Rectángulo</span>
-          </button>
-          <button class="tool-btn-large" id="shape-circle">
-            <div style="width:20px; height:20px; border:2px solid #333; border-radius:50%; margin:2px;"></div>
-            <span>Elipse</span>
-          </button>
+          <div class="tool-grid" style="grid-template-columns: repeat(4, 26px);">
+            <button class="tool-grid-btn" id="tool-line" title="Línea">📏</button>
+            <button class="tool-grid-btn" id="shape-rect" title="Rectángulo">⬛</button>
+            <button class="tool-grid-btn" id="shape-circle" title="Elipse">🔴</button>
+            <button class="tool-grid-btn" id="shape-tri" title="Triángulo">🔺</button>
+            <button class="tool-grid-btn" id="shape-star" title="Estrella">⭐</button>
+            <button class="tool-grid-btn" id="shape-rhombus" title="Rombo">♦️</button>
+          </div>
         </div>
-        <div class="ribbon-group-title">Formas</div>
+        <div class="ribbon-group-title">Formas Nuevas</div>
       </div>
 
       <div class="ribbon-group">
@@ -206,17 +213,33 @@
             <div id="color2-box" class="color-preview-box"></div>
           </div>
           <div class="color-grid" id="palette"></div>
+          <input type="color" id="native-color" style="opacity:0; width:1px; height:1px; position:absolute;">
+          <button onclick="document.getElementById('native-color').click()" style="padding:4px; font-size:10px; cursor:pointer;">Más colores</button>
         </div>
         <div class="ribbon-group-title">Colores</div>
       </div>
     </div>
 
     <div id="panel-view" class="ribbon-panel">
+      <div class="ribbon-group">
+        <div class="ribbon-controls cursor-grid">
+          <div class="cursor-btn active" data-cursor="👆">👆</div>
+          <div class="cursor-btn" data-cursor="✏️">✏️</div>
+          <div class="cursor-btn" data-cursor="⚔️">⚔️</div>
+          <div class="cursor-btn" data-cursor="🪄">🪄</div>
+          <div class="cursor-btn" data-cursor="🖌️">🖌️</div>
+          <div class="cursor-btn" data-cursor="👽">👽</div>
+          <div class="cursor-btn" data-cursor="🔥">🔥</div>
+          <div class="cursor-btn" data-cursor="🍕">🍕</div>
+        </div>
+        <div class="ribbon-group-title">Elige tu Cursor Personalizado (Visible para otros)</div>
+      </div>
       <div class="ribbon-group" style="border-right:none;">
         <div class="ribbon-controls" style="flex-direction:column; align-items:flex-start; gap:6px; padding:0 10px;">
-          <label><input type="checkbox" checked id="chk-chat"> Panel de Chat</label>
+          <label><input type="checkbox" checked id="chk-chat"> Mostrar Chat</label>
+          <label><input type="checkbox" id="chk-grid" onchange="toggleGrid(this)"> Cuadrícula Guía</label>
         </div>
-        <div class="ribbon-group-title">Mostrar u ocultar</div>
+        <div class="ribbon-group-title">Interfaz</div>
       </div>
     </div>
   </div>
@@ -225,18 +248,22 @@
     <div id="workspace">
       <div id="canvas-container">
         <canvas id="paintCanvas" width="960" height="540"></canvas>
+        <div id="grid-overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background-size: 20px 20px; background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px), linear-gradient(to bottom, #e0e0e0 1px, transparent 1px); pointer-events:none; z-index: 50;"></div>
         <div id="cursors-layer"></div>
       </div>
     </div>
 
     <div id="chat-sidebar">
-      <div id="chat-header"><span>Chat de la Sala</span><span id="chat-room-name"></span></div>
+      <div id="chat-header"><span>Chat Aislado</span><span id="chat-room-name"></span></div>
       <div id="chat-messages">
-        <div style="text-align:center; color:#aaa; font-style:italic;">Bienvenido al chat aislado.</div>
+        <div style="text-align:center; color:#aaa; font-style:italic;">Conectando...</div>
       </div>
       <div id="chat-input-container">
-        <input type="text" id="chat-input" placeholder="Escribe un mensaje...">
-        <button id="btn-send-chat" style="padding:2px 8px; cursor:pointer;">Enviar</button>
+        <input type="text" id="chat-input" placeholder="Mensaje...">
+        <div class="emoji-btn" onclick="addEmoji('👍')">👍</div>
+        <div class="emoji-btn" onclick="addEmoji('😂')">😂</div>
+        <div class="emoji-btn" onclick="addEmoji('🎨')">🎨</div>
+        <button id="btn-send-chat" style="padding:2px 6px; cursor:pointer;">➤</button>
       </div>
     </div>
   </div>
@@ -244,7 +271,7 @@
   <div id="status-bar">
     <div class="status-left">
       <div class="status-field">📍 <span id="coords-display">0, 0px</span></div>
-      <div class="status-field">💾 DB: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
+      <div class="status-field">💾 Server-Infinit: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
       <div class="status-field">👤 Sala: <span id="room-display" style="font-weight:600;">-</span></div>
     </div>
   </div>
@@ -254,42 +281,41 @@
       <div id="title-bar" style="border-radius: 4px 4px 0 0;"><div class="title-text">Entrada con Aislamiento xd</div></div>
       <div class="modal-body">
         <label style="font-weight:600;">Tu Apodo:</label>
-        <input type="text" id="net-username" class="modal-input" value="DibujantePro" maxlength="15">
-        
+        <input type="text" id="net-username" class="modal-input" value="ProArtist" maxlength="15">
         <label style="font-weight:600;">Nombre de la Sala (Aisla la DB y el Chat):</label>
         <input type="text" id="net-room" class="modal-input" value="sala_epica_1">
-        
-        <button id="btn-connect" class="modal-btn" style="margin-top:8px;">Conectar a Sala Aislada</button>
+        <button id="btn-connect" class="modal-btn" style="margin-top:8px;">Entrar a la Sala</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ── CONFIGURACIÓN DE SERVER-INFINIT ──
+    // ── CONFIGURACIÓN SERVER-INFINIT ──
     const INFINIT_API_KEY = '68cbaf8483807fd1254db8e893d293b03430e0ca';
     const INFINIT_URL = 'https://ikelene.dev/storage/';
     const YYF_UPLOAD = 'https://yyf.mubilop.com/api/upload';
 
-    // Estados Locales
+    // ── ESTADO GLOBAL ──
     const state = {
       tool: 'pencil',
-      color1: '#000000',
-      color2: '#ffffff',
-      activeColorTarget: 'color1',
-      size: 2,
-      isDrawing: false,
-      startX: 0, startY: 0,
+      color1: '#000000', color2: '#ffffff', activeColorTarget: 'color1',
+      size: 2, isDrawing: false, startX: 0, startY: 0,
       username: '', room: '',
-      isCanvasDirty: false,
-      isSavingProcessActive: false
+      isCanvasDirty: false, isSavingProcessActive: false,
+      myCursor: '👆' // Cursor personalizado
     };
 
-    const win7Colors = ['#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8', '#3f48cc', '#a349a4', '#ffffff', '#c3c3c3', '#b5e61d', '#ffc90e', '#ffeaec', '#efe4b0', '#b5e61d', '#7092be', '#c8bfe7', '#ffffff'];
+    // Paleta expandida (24 colores)
+    const win7Colors = [
+      '#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8', '#3f48cc', '#a349a4', '#ff8c00', '#8b4513',
+      '#ffffff', '#c3c3c3', '#b97a57', '#ffaec9', '#ffc90e', '#efe4b0', '#b5e61d', '#99d9ea', '#7092be', '#c8bfe7', '#ff69b4', '#00fa9a'
+    ];
+
     const canvas = document.getElementById('paintCanvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     const cursorsLayer = document.getElementById('cursors-layer');
 
-    // Paleta
+    // Inicializar Paleta
     win7Colors.forEach(color => {
       const cell = document.createElement('div');
       cell.className = 'color-cell'; cell.style.background = color;
@@ -300,57 +326,114 @@
       document.getElementById('palette').appendChild(cell);
     });
 
+    // Custom Color Picker Integración
+    document.getElementById('native-color').addEventListener('input', (e) => {
+      const color = e.target.value;
+      if (state.activeColorTarget === 'color1') { state.color1 = color; document.getElementById('color1-box').style.background = color; } 
+      else { state.color2 = color; document.getElementById('color2-box').style.background = color; }
+    });
+
     document.getElementById('color1-box').onclick = () => { document.getElementById('color2-box').classList.remove('active'); document.getElementById('color1-box').classList.add('active'); state.activeColorTarget = 'color1'; };
     document.getElementById('color2-box').onclick = () => { document.getElementById('color1-box').classList.remove('active'); document.getElementById('color2-box').classList.add('active'); state.activeColorTarget = 'color2'; };
 
-    // Pestañas
+    // Pestañas y Menú Archivo
+    document.getElementById('tab-file-trigger').onclick = () => {
+      const menu = document.getElementById('file-menu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    };
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.tab-file') && !e.target.closest('#file-menu')) {
+        document.getElementById('file-menu').style.display = 'none';
+      }
+    });
+    
     document.getElementById('tab-home-trigger').onclick = (e) => { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.ribbon-panel').forEach(p=>p.classList.remove('active')); e.target.classList.add('active'); document.getElementById('panel-home').classList.add('active'); };
     document.getElementById('tab-view-trigger').onclick = (e) => { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.ribbon-panel').forEach(p=>p.classList.remove('active')); e.target.classList.add('active'); document.getElementById('panel-view').classList.add('active'); };
     document.getElementById('chk-chat').onchange = (e) => { document.getElementById('chat-sidebar').style.display = e.target.checked ? 'flex' : 'none'; };
 
+    function toggleGrid(chk) { document.getElementById('grid-overlay').style.display = chk.checked ? 'block' : 'none'; }
+
     // Herramientas
-    function setTool(toolName, el) { state.tool = toolName; document.querySelectorAll('.tool-grid-btn, .tool-btn-large').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); }
+    function setTool(t, el) { state.tool = t; document.querySelectorAll('.tool-grid-btn').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); }
     document.getElementById('tool-pencil').onclick = (e) => setTool('pencil', e.target);
     document.getElementById('tool-eraser').onclick = (e) => setTool('eraser', e.target);
     document.getElementById('tool-bucket').onclick = (e) => setTool('bucket', e.target);
     document.getElementById('tool-picker').onclick = (e) => setTool('picker', e.target);
+    document.getElementById('tool-text').onclick = (e) => setTool('text', e.target);
+    document.getElementById('tool-spray').onclick = (e) => setTool('spray', e.target);
     document.getElementById('tool-line').onclick = (e) => setTool('line', e.target);
     document.getElementById('shape-rect').onclick = (e) => setTool('rect', e.currentTarget);
     document.getElementById('shape-circle').onclick = (e) => setTool('circle', e.currentTarget);
-    document.getElementById('tool-clear').onclick = () => { if(confirm("¿Borrar lienzo para todos?")) { executeClear(); network.sendDrawAction({ type: 'clear' }); markCanvasDirty(); } };
+    document.getElementById('shape-tri').onclick = (e) => setTool('triangle', e.currentTarget);
+    document.getElementById('shape-star').onclick = (e) => setTool('star', e.currentTarget);
+    document.getElementById('shape-rhombus').onclick = (e) => setTool('rhombus', e.currentTarget);
+
+    function clearCanvasPrompt() { if(confirm("¿Limpiar todo el lienzo para todos los amigos?")) { executeClear(); network.sendDrawAction({ type: 'clear' }); markCanvasDirty(); document.getElementById('file-menu').style.display = 'none'; } }
+    
+    // Selector Cursore Personalizado
+    document.querySelectorAll('.cursor-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        document.querySelectorAll('.cursor-btn').forEach(b=>b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        state.myCursor = e.currentTarget.getAttribute('data-cursor');
+      };
+    });
 
     document.querySelectorAll('#size-selector .size-option').forEach(opt => {
       opt.onclick = (e) => { document.querySelectorAll('#size-selector .size-option').forEach(o=>o.classList.remove('active')); e.currentTarget.classList.add('active'); state.size = parseInt(e.currentTarget.getAttribute('data-size')); };
     });
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = `Paint_Collab_${state.room}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      document.getElementById('file-menu').style.display = 'none';
+    }
 
     let snapshot = null;
     function getCoords(e) {
       const rect = canvas.getBoundingClientRect();
       return { x: Math.round((e.clientX - rect.left) * (canvas.width / rect.width)), y: Math.round((e.clientY - rect.top) * (canvas.height / rect.height)) };
     }
-    
-    // Función especial para sacar las coordenadas del táctil (Móvil)
     function getTouchCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect(); const touch = e.touches[0];
       return { x: Math.round((touch.clientX - rect.left) * (canvas.width / rect.width)), y: Math.round((touch.clientY - rect.top) * (canvas.height / rect.height)) };
     }
 
-    // ── LÓGICA DE DIBUJO ──
     function markCanvasDirty() { state.isCanvasDirty = true; }
 
-    function drawLineLocal(x0, y0, x1, y1, color, size, isEraser = false) {
-      ctx.beginPath(); ctx.lineWidth = size; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      if (isEraser) { ctx.strokeStyle = state.color2; ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); return; }
-      ctx.strokeStyle = color; ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    // ── MOTOR GRÁFICO (NUEVAS FORMAS Y TEXTO) ──
+    function drawLineLocal(x0, y0, x1, y1, color, size, isEraser = false, isSpray = false) {
+      if(isEraser) { ctx.beginPath(); ctx.lineWidth=size; ctx.lineCap='round'; ctx.strokeStyle=state.color2; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); return; }
+      if(isSpray) {
+        ctx.fillStyle = color;
+        for(let i=0; i<size*3; i++) {
+          const r = Math.random() * size * 1.5; const ang = Math.random() * Math.PI * 2;
+          ctx.fillRect(x1 + r * Math.cos(ang), y1 + r * Math.sin(ang), 1, 1);
+        }
+        return;
+      }
+      ctx.beginPath(); ctx.lineWidth=size; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle=color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
     }
 
     function drawShapeLocal(type, x0, y0, x1, y1, color, size) {
-      ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = size; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = size; ctx.lineJoin = 'round';
+      const w = x1 - x0; const h = y1 - y0;
       if (type === 'line') { ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); } 
-      else if (type === 'rect') { ctx.rect(x0, y0, x1 - x0, y1 - y0); } 
-      else if (type === 'circle') { let r = Math.sqrt(Math.pow(x1-x0,2)+Math.pow(y1-y0,2)); ctx.arc(x0, y0, r, 0, 2*Math.PI); }
+      else if (type === 'rect') { ctx.rect(x0, y0, w, h); } 
+      else if (type === 'circle') { let r = Math.sqrt(w*w + h*h); ctx.arc(x0, y0, r, 0, 2*Math.PI); }
+      else if (type === 'triangle') { ctx.moveTo(x0 + w/2, y0); ctx.lineTo(x1, y1); ctx.lineTo(x0, y1); ctx.closePath(); }
+      else if (type === 'rhombus') { ctx.moveTo(x0 + w/2, y0); ctx.lineTo(x1, y0 + h/2); ctx.lineTo(x0 + w/2, y1); ctx.lineTo(x0, y0 + h/2); ctx.closePath(); }
+      else if (type === 'star') {
+        const r = Math.sqrt(w*w+h*h); let rot=Math.PI/2*3; let x=x0, y=y0, step=Math.PI/5;
+        for(let i=0;i<5;i++){ ctx.lineTo(x+Math.cos(rot)*r, y+Math.sin(rot)*r); rot+=step; ctx.lineTo(x+Math.cos(rot)*(r/2.5), y+Math.sin(rot)*(r/2.5)); rot+=step; } ctx.closePath();
+      }
       ctx.stroke();
+    }
+
+    function drawTextLocal(txt, x, y, color, size) {
+      ctx.font = `bold ${size*4 + 10}px 'Segoe UI', Arial`; ctx.fillStyle = color; ctx.fillText(txt, x, y);
     }
 
     function executeClear() { ctx.fillStyle = state.color2; ctx.fillRect(0, 0, canvas.width, canvas.height); }
@@ -373,7 +456,7 @@
     }
     function hexToRgb(hex) { var c = hex.substring(1).match(/.{1,2}/g); return [parseInt(c[0],16), parseInt(c[1],16), parseInt(c[2],16)]; }
 
-    // Función universal para inicio de trazo (Mouse y Touch)
+    // Interacciones UI
     function handleDrawStart(coords, isRightClick) {
       if (!network.connected) return;
       let activeColor = isRightClick ? state.color2 : state.color1;
@@ -381,138 +464,109 @@
       snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
       
       if (state.tool === 'bucket') {
-        floodFill(state.startX, state.startY, activeColor);
-        network.sendDrawAction({ type: 'bucket', x: state.startX, y: state.startY, color: activeColor });
-        state.isDrawing = false; markCanvasDirty();
+        floodFill(state.startX, state.startY, activeColor); network.sendDrawAction({ type: 'bucket', x: state.startX, y: state.startY, color: activeColor }); state.isDrawing = false; markCanvasDirty();
       } else if (state.tool === 'picker') {
         const d = ctx.getImageData(state.startX, state.startY, 1, 1).data;
         const hex = "#" + ((1<<24)+(d[0]<<16)+(d[1]<<8)+d[2]).toString(16).slice(1);
         if(state.activeColorTarget === 'color1') { state.color1 = hex; document.getElementById('color1-box').style.background = hex; } 
         else { state.color2 = hex; document.getElementById('color2-box').style.background = hex; }
         state.isDrawing = false;
+      } else if (state.tool === 'text') {
+        state.isDrawing = false;
+        const t = prompt("Escribe tu texto:");
+        if(t) { drawTextLocal(t, coords.x, coords.y, activeColor, state.size); network.sendDrawAction({ type: 'text', txt: t, x: coords.x, y: coords.y, color: activeColor, size: state.size }); markCanvasDirty(); }
       }
     }
 
-    // Función universal para movimiento de trazo (Mouse y Touch)
     function handleDrawMove(coords, isRightClick) {
       document.getElementById('coords-display').innerText = `${coords.x}, ${coords.y}px`;
-      if (network.connected) network.sendCursor(coords.x, coords.y);
+      if (network.connected) network.sendCursor(coords.x, coords.y, state.myCursor);
       if (!state.isDrawing) return;
       let activeColor = isRightClick ? state.color2 : state.color1;
       
-      if (state.tool === 'pencil' || state.tool === 'eraser') {
-        drawLineLocal(state.startX, state.startY, coords.x, coords.y, activeColor, state.size, state.tool === 'eraser');
-        network.sendDrawAction({ type: 'line', x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, eraser: (state.tool === 'eraser') });
-        state.startX = coords.x; state.startY = coords.y;
-        markCanvasDirty();
-      } else if (['line', 'rect', 'circle'].includes(state.tool)) {
-        ctx.putImageData(snapshot, 0, 0);
-        drawShapeLocal(state.tool, state.startX, state.startY, coords.x, coords.y, activeColor, state.size);
+      if (['pencil', 'eraser', 'spray'].includes(state.tool)) {
+        drawLineLocal(state.startX, state.startY, coords.x, coords.y, activeColor, state.size, state.tool==='eraser', state.tool==='spray');
+        network.sendDrawAction({ type: 'line', x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, eraser: state.tool==='eraser', spray: state.tool==='spray' });
+        state.startX = coords.x; state.startY = coords.y; markCanvasDirty();
+      } else if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus'].includes(state.tool)) {
+        ctx.putImageData(snapshot, 0, 0); drawShapeLocal(state.tool, state.startX, state.startY, coords.x, coords.y, activeColor, state.size);
       }
     }
 
-    // Función universal para fin de trazo (Mouse y Touch)
     function handleDrawEnd(coords, isRightClick) {
-      if (!state.isDrawing) return;
-      state.isDrawing = false;
+      if (!state.isDrawing) return; state.isDrawing = false;
       let activeColor = isRightClick ? state.color2 : state.color1;
-      if (['line', 'rect', 'circle'].includes(state.tool)) {
+      if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus'].includes(state.tool)) {
         network.sendDrawAction({ type: 'shape', shapeType: state.tool, x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size });
         markCanvasDirty();
       }
     }
 
-    // ── EVENTOS MOUSE ──
+    // Bindings Ratón y Táctil
     canvas.onmousedown = (e) => handleDrawStart(getCoords(e), e.button === 2);
     canvas.onmousemove = (e) => handleDrawMove(getCoords(e), e.buttons === 2);
     canvas.onmouseup = (e) => handleDrawEnd(getCoords(e), e.button === 2);
     canvas.onmouseleave = () => state.isDrawing = false;
     canvas.oncontextmenu = (e) => e.preventDefault();
-
-    // ── EVENTOS TÁCTILES (MÓVIL) ──
-    canvas.addEventListener('touchstart', (e) => {
-      e.preventDefault(); // Previene scroll de la pantalla
-      handleDrawStart(getTouchCoords(e), false); // En touch siempre usamos color1 por defecto
-    }, { passive: false });
-
-    canvas.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      handleDrawMove(getTouchCoords(e), false);
-    }, { passive: false });
-
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleDrawStart(getTouchCoords(e), false); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(getTouchCoords(e), false); }, { passive: false });
     canvas.addEventListener('touchend', (e) => {
       e.preventDefault();
-      if(e.changedTouches.length > 0){
-        // changedTouches tiene las coordenadas finales al levantar el dedo
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.changedTouches[0];
-        const coords = { x: Math.round((touch.clientX - rect.left) * (canvas.width / rect.width)), y: Math.round((touch.clientY - rect.top) * (canvas.height / rect.height)) };
-        handleDrawEnd(coords, false);
-      } else {
-        state.isDrawing = false;
-      }
+      if(e.changedTouches.length>0){ const c = {x: Math.round((e.changedTouches[0].clientX - canvas.getBoundingClientRect().left)*(canvas.width/canvas.getBoundingClientRect().width)), y: Math.round((e.changedTouches[0].clientY - canvas.getBoundingClientRect().top)*(canvas.height/canvas.getBoundingClientRect().height))}; handleDrawEnd(c, false); }
+      else state.isDrawing = false;
     }, { passive: false });
 
-
-    // ── INTERCONEXIÓN AISLADA CLOUD32 ──
+    // ── RED CLOUD32 AISLADA ──
     class Cloud32NetworkClient {
       constructor() { this.ws = null; this.connected = false; this.remoteCursors = {}; }
       connect(user, room) {
         state.username = user; state.room = room;
-        document.getElementById('room-display').innerText = room;
-        document.getElementById('chat-room-name').innerText = `[${room}]`;
+        document.getElementById('room-display').innerText = room; document.getElementById('chat-room-name').innerText = `[${room}]`;
         this.ws = new WebSocket('wss://cloud-link-server--jere32game.replit.app');
         this.ws.onopen = () => {
-          this.connected = true;
-          document.getElementById('status-indicator').className = 'status-dot online';
+          this.connected = true; document.getElementById('status-indicator').className = 'status-dot online';
           document.getElementById('network-text').innerText = `En línea`;
-          document.getElementById('window-title').innerText = `${room} - Paint Infinit`;
-          this._send({ cmd: 'setid', val: state.username });
-          this._send({ cmd: 'link', val: [state.room] }); // Intento normal del server
+          this._send({ cmd: 'setid', val: state.username }); this._send({ cmd: 'link', val: [state.room] });
         };
         this.ws.onmessage = (evt) => {
           try {
             const msg = JSON.parse(evt.data);
             if (msg.cmd === 'ulist') { document.getElementById('client-count-badge').innerText = `(${Array.isArray(msg.val) ? msg.val.length : 1})`; return; }
             if (msg.cmd === 'gmsg') {
-              const sender = msg.origin?.username || 'Invitado';
-              if (sender === state.username) return;
-              
+              const sender = msg.origin?.username || 'Invitado'; if (sender === state.username) return;
               const p = JSON.parse(msg.val);
               
-              // EL TRUCO ESTÁ AQUÍ: Aislamiento
-              if (p.room !== state.room) return; 
-
-              if (p.n7_action === 'cursor') { this.syncCursor(sender, p.x, p.y); }
+              if (p.room !== state.room) return; // Aislamiento Total
+              
+              if (p.n7_action === 'cursor') { this.syncCursor(sender, p.x, p.y, p.c); }
               else if (p.n7_action === 'draw') {
                 const d = p.data;
-                if (d.type === 'line') drawLineLocal(d.x0, d.y0, d.x1, d.y1, d.color, d.size, d.eraser);
+                if (d.type === 'line') drawLineLocal(d.x0, d.y0, d.x1, d.y1, d.color, d.size, d.eraser, d.spray);
                 else if (d.type === 'shape') drawShapeLocal(d.shapeType, d.x0, d.y0, d.x1, d.y1, d.color, d.size);
                 else if (d.type === 'bucket') floodFill(d.x, d.y, d.color);
+                else if (d.type === 'text') drawTextLocal(d.txt, d.x, d.y, d.color, d.size);
                 else if (d.type === 'clear') executeClear();
               }
               else if (p.n7_action === 'chat') { appendChatMsg(sender, p.text); }
             }
           } catch(e) {}
         };
-        this.ws.onclose = () => {
-          this.connected = false; document.getElementById('status-indicator').className = 'status-dot';
-          document.getElementById('network-text').innerText = "Desconectado";
-        };
+        this.ws.onclose = () => { this.connected = false; document.getElementById('status-indicator').className = 'status-dot'; };
       }
       _send(obj) { if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(obj)); }
-      
-      // Añadimos `room: state.room` a todos los paquetes salientes
       sendDrawAction(d) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'draw', room: state.room, data: d }) }); }
-      sendCursor(x, y) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'cursor', room: state.room, x, y }) }); }
+      sendCursor(x, y, c) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'cursor', room: state.room, x, y, c }) }); }
       sendChat(txt) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'chat', room: state.room, text: txt }) }); }
 
-      syncCursor(user, x, y) {
+      syncCursor(user, x, y, cursorIcon) {
         let node = this.remoteCursors[user];
         if (!node) {
           node = document.createElement('div'); node.className = 'remote-cursor';
-          const lbl = document.createElement('div'); lbl.className = 'remote-label'; lbl.innerText = user;
-          node.appendChild(lbl); cursorsLayer.appendChild(node); this.remoteCursors[user] = node;
+          node.innerHTML = `<div class="remote-icon">${cursorIcon||'👆'}</div><div class="remote-label">${user}</div>`;
+          cursorsLayer.appendChild(node); this.remoteCursors[user] = node;
+        } else {
+          // Actualiza el icono si el usuario lo cambió
+          node.querySelector('.remote-icon').innerText = cursorIcon || '👆';
         }
         node.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         clearTimeout(node.killTimeout); node.style.opacity = "1";
@@ -521,89 +575,53 @@
     }
     const network = new Cloud32NetworkClient();
 
-    // ── LÓGICA DE CHAT UI ──
-    const chatContainer = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
+    // ── CHAT UI ──
+    const chatContainer = document.getElementById('chat-messages'); const chatInput = document.getElementById('chat-input');
     function appendChatMsg(user, text, isSelf=false) {
       const b = document.createElement('div'); b.className = `msg-bubble ${isSelf ? 'self' : ''}`;
-      const u = document.createElement('div'); u.className = 'msg-user'; u.innerText = user;
-      const t = document.createElement('span'); t.innerText = text;
-      b.appendChild(u); b.appendChild(t); chatContainer.appendChild(b);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      b.innerHTML = `<div class="msg-user">${user}</div><span>${text}</span>`;
+      chatContainer.appendChild(b); chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    function handleSendChat() {
-      const txt = chatInput.value.trim();
-      if(txt) { network.sendChat(txt); appendChatMsg(state.username, txt, true); chatInput.value = ''; }
-    }
+    function addEmoji(em) { chatInput.value += em; chatInput.focus(); }
+    function handleSendChat() { const txt = chatInput.value.trim(); if(txt) { network.sendChat(txt); appendChatMsg(state.username, txt, true); chatInput.value = ''; } }
     document.getElementById('btn-send-chat').onclick = handleSendChat;
     chatInput.onkeydown = (e) => { if(e.key === 'Enter') handleSendChat(); };
 
-    // ── LÓGICA DE PERSISTENCIA SERVER-INFINIT ──
+    // ── SERVER-INFINIT ──
     async function loadRoomImage(roomName) {
-      document.getElementById('btn-connect').innerText = "Descargando DB Aislada...";
+      document.getElementById('btn-connect').innerText = "Cargando DB...";
       try {
-        const res = await fetch(INFINIT_URL + 'get.php', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${roomName}` })
-        });
+        const res = await fetch(INFINIT_URL + 'get.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${roomName}` }) });
         const d = await res.json();
-        if (d.success && d.data && d.data.value) {
-          const url = d.data.value;
-          if (url.startsWith('http')) {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => { ctx.drawImage(img, 0, 0); };
-            img.src = url;
-          }
+        if (d.success && d.data && d.data.value && d.data.value.startsWith('http')) {
+          const img = new Image(); img.crossOrigin = 'Anonymous';
+          img.onload = () => { ctx.drawImage(img, 0, 0); }; img.src = d.data.value;
         }
-      } catch (e) { console.error("Error al cargar db:", e); }
+      } catch (e) {}
       document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('btn-connect').innerText = "Conectar a Sala Aislada";
     }
 
     async function saveRoomImage() {
       if (state.isSavingProcessActive || !state.isCanvasDirty || !state.room) return;
-      
-      state.isSavingProcessActive = true;
-      state.isCanvasDirty = false;
-      
-      document.getElementById('status-indicator').className = 'status-dot saving';
-      document.getElementById('db-status').innerText = 'Guardando DB...';
-      
+      state.isSavingProcessActive = true; state.isCanvasDirty = false;
+      document.getElementById('status-indicator').className = 'status-dot saving'; document.getElementById('db-status').innerText = 'Guardando DB...';
       try {
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const fd = new FormData(); fd.append('file', blob, 'master_canvas.png');
-        
         const yyfRes = await fetch(YYF_UPLOAD, { method: 'POST', body: fd });
         const yyfData = await yyfRes.json();
-        
-        const masterLink = 'https://yyf.mubilop.com' + yyfData.fileUrl; 
-        
-        await fetch(INFINIT_URL + 'store.php', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${state.room}`, value: masterLink, mimeType: 'text/plain' })
-        });
+        await fetch(INFINIT_URL + 'store.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${state.room}`, value: 'https://yyf.mubilop.com' + yyfData.fileUrl, mimeType: 'text/plain' }) });
         document.getElementById('db-status').innerText = 'Guardado OK';
-      } catch(e) {
-        state.isCanvasDirty = true;
-        document.getElementById('db-status').innerText = 'Error al guardar';
-      }
-      
+      } catch(e) { state.isCanvasDirty = true; document.getElementById('db-status').innerText = 'Error al guardar'; }
       state.isSavingProcessActive = false;
       setTimeout(() => { if(!state.isSavingProcessActive) document.getElementById('status-indicator').className = 'status-dot online'; }, 1000);
     }
-
     setInterval(saveRoomImage, 2000);
 
-    // Evento Formulario
     document.getElementById('btn-connect').onclick = async () => {
-      const user = document.getElementById('net-username').value.trim();
-      const room = document.getElementById('net-room').value.trim();
+      const user = document.getElementById('net-username').value.trim(); const room = document.getElementById('net-room').value.trim();
       if (!user || !room) { alert("Completa los datos crack."); return; }
-      
-      executeClear(); 
-      await loadRoomImage(room);
-      network.connect(user, room);
+      executeClear(); await loadRoomImage(room); network.connect(user, room);
     };
 
     executeClear();
