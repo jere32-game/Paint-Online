@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Paint Infinit Ultimate 100X (Windows 7 Edition)</title>
+  <title>Paint Infinit Ultimate (Voz + Proximidad + 100X)</title>
+  
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
   <style>
-    /* ── DISEÑO AERO / WINDOWS 7 + EXPANSIÓN 100X ── */
+    /* ── DISEÑO AERO / WINDOWS 7 + EXPANSIÓN MASIVA ── */
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 12px; background: #eed; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
@@ -27,15 +30,16 @@
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #e81123; box-shadow: 0 0 3px #e81123; flex-shrink: 0; }
     .status-dot.online { background: #107c41; box-shadow: 0 0 5px #107c41; }
     .status-dot.saving { background: #ffb900; box-shadow: 0 0 5px #ffb900; animation: pulse 1s infinite; }
-    .status-dot.reconnecting { background: #0078d7; box-shadow: 0 0 5px #0078d7; animation: blink 0.5s infinite; }
+    .status-dot.voice-active { background: #00d2ff; box-shadow: 0 0 8px #00d2ff; animation: pulse 0.5s infinite; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
 
     #ribbon { background: #f2f5f9; border-bottom: 1px solid #b9c9da; display: flex; flex-direction: column; position: relative; z-index: 100; flex-shrink: 0; }
     #ribbon-tabs { display: flex; padding-left: 4px; background: linear-gradient(to bottom, #f5f8fc, #e3ecf7); border-bottom: 1px solid #cbd9e9; height: 30px; align-items: flex-end; }
     .tab { padding: 4px 16px; border: 1px solid transparent; border-bottom: none; border-top-left-radius: 4px; border-top-right-radius: 4px; color: #333; cursor: pointer; font-size: 12px; margin-bottom: -1px; height: 25px; display: flex; align-items: center; }
     .tab:hover { background: rgba(255,255,255,0.5); }
     .tab.active { background: #f2f5f9; border-color: #b9c9da; border-bottom: 1px solid #f2f5f9; font-weight: bold; position: relative; z-index: 5; color: #000; }
+    .tab-voice { background: linear-gradient(to bottom, #009688, #00796B); color: white !important; font-weight: bold; border-radius: 2px; margin-left: 5px; }
+    .tab-voice:hover { background: linear-gradient(to bottom, #4DB6AC, #00897B); }
     
     .tab-file { background: linear-gradient(to bottom, #1b5fa7, #2679c1); color: white !important; font-weight: bold; border-radius: 2px; padding: 4px 14px; height: 24px; margin-right: 6px; }
     .tab-file:hover { background: linear-gradient(to bottom, #358be9, #236cb8); }
@@ -57,7 +61,6 @@
     .tool-grid-btn:hover { background: #eaf2fb; border-color: #b8d6fb; }
     .tool-grid-btn.active { background: #cce4f7; border-color: #a4c9eb; box-shadow: inset 0 0 2px rgba(0,0,0,0.1); }
 
-    /* Selección de tamaño expandida */
     #size-selector { display: flex; flex-direction: column; gap: 2px; width: 65px; padding: 2px; background: white; border: 1px solid #cbd5e1; }
     .size-option { height: 14px; display: flex; align-items: center; cursor: pointer; padding: 2px; border: 1px solid transparent; }
     .size-option:hover { background: #eaf2fb; }
@@ -70,12 +73,10 @@
     #color1-box { background: #000000; top: 0; left: 0; z-index: 10; }
     #color2-box { background: #ffffff; bottom: 0; right: 0; z-index: 5; }
     .color-preview-box.active { border: 2px solid #307ec9; z-index: 12; }
-    
     .color-grid { display: grid; grid-template-columns: repeat(12, 16px); gap: 2px; }
     .color-cell { width: 16px; height: 16px; border: 1px solid #a0a0a0; cursor: pointer; border-radius: 1px; }
     .color-cell:hover { transform: scale(1.2); z-index: 20; box-shadow: 0 0 3px rgba(0,0,0,0.5); }
 
-    /* Sellos y Cursores */
     .stamp-grid, .cursor-grid { display: grid; grid-template-columns: repeat(6, 26px); gap: 2px; max-height: 70px; overflow-y: auto; padding-right: 4px; }
     .stamp-btn { font-size: 16px; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 1px solid transparent; }
     .stamp-btn:hover { background: #eaf2fb; border-color: #b8d6fb; }
@@ -93,22 +94,23 @@
     .msg-bubble { background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #d9e3f0; align-self: flex-start; max-width: 90%; word-wrap: break-word; position:relative; }
     .msg-bubble.self { background: #dcf8c6; border-color: #c4e6b0; align-self: flex-end; }
     .msg-user { font-size: 9px; font-weight: bold; color: #1e395b; margin-bottom: 2px; }
-    .msg-sys { text-align: center; font-size: 10px; color: #666; font-style: italic; background: none; border: none; align-self: center; }
+    .msg-sys { text-align: center; font-size: 10px; color: #666; font-style: italic; }
     #chat-input-container { padding: 8px; background: #e5edf6; border-top: 1px solid #d9e3f0; display:flex; gap:5px; flex-wrap: wrap; }
     #chat-input { flex-grow: 1; padding: 5px; border: 1px solid #b9c9da; border-radius: 2px; outline: none; }
 
-    /* Cursores Remotos */
+    /* Cursors & Voice Stretching */
     #cursors-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
-    .remote-cursor { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100000; transform: translate3d(0, 0, 0); will-change: transform; transition: opacity 0.2s; display: flex; flex-direction: column; align-items: flex-start; }
-    .remote-icon { font-size: 20px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transform: translate(-5px, -5px); }
-    .remote-icon img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid white; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); object-fit: cover; }
+    .remote-cursor { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100000; will-change: transform; transition: opacity 0.2s; display: flex; flex-direction: column; align-items: flex-start; }
+    
+    /* El icono se estira dinámicamente con la voz usando transition o script directo */
+    .remote-icon { font-size: 24px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transform-origin: center bottom; will-change: transform; }
+    .remote-icon img { width: 28px; height: 28px; border-radius: 50%; border: 1px solid white; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); object-fit: cover; }
     .remote-label { background: rgba(30, 57, 91, 0.85); color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 3px; white-space: nowrap; margin-left: 10px; box-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
 
-    /* Barra de Estado */
     #status-bar { height: 24px; background: #f2f5f9; border-top: 1px solid #b9c9da; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: #333; font-size: 11px; z-index: 101; flex-shrink: 0; }
     .status-field { display: flex; align-items: center; gap: 6px; border-right: 1px solid #d9e3f0; padding-right: 15px; }
 
-    /* Login Modal Draggable */
+    /* Modals */
     #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0, 0.5); backdrop-filter: blur(3px); z-index: 999999; display: flex; align-items: center; justify-content: center; }
     .window-modal { background: #f0f0f0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 6px; width: 420px; max-width: 95%; display: flex; flex-direction: column; position: absolute; }
     .modal-header { background: linear-gradient(to bottom, #1b5fa7, #2679c1); padding: 8px; color: white; font-weight: bold; cursor: grab; border-radius: 5px 5px 0 0; display:flex; justify-content: space-between;}
@@ -116,10 +118,21 @@
     .modal-input { padding: 8px; border: 1px solid #abc; border-radius: 3px; font-family: inherit; font-size: 13px; width: 100%; }
     .modal-btn { padding: 10px; background: #2679c1; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 13px; color: white; transition: 0.2s; }
     .modal-btn:hover { background: #1b5fa7; }
-    
+    .modal-btn.red { background: #e81123; } .modal-btn.red:hover { background: #c20f1c; }
+    .modal-btn.green { background: #107c41; } .modal-btn.green:hover { background: #0b5a2f; }
+
     .file-upload-box { border: 2px dashed #b9c9da; padding: 10px; text-align: center; background: #fff; cursor: pointer; border-radius: 4px; font-size: 11px;}
     .file-upload-box:hover { background: #eaf2fb; border-color: #358be9; }
 
+    @media (max-width: 768px) {
+      #main-content { flex-direction: column; }
+      #chat-sidebar { width: 100%; height: 200px; border-left: none; border-top: 1px solid #b9c9da; }
+      #workspace { padding: 5px; }
+      .title-text { max-width: 80px; text-overflow: ellipsis; }
+      #status-bar { height: auto; padding: 4px 10px; flex-wrap: wrap; }
+      .status-field { border-right: none; padding-right: 5px; }
+      #network-status span { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -131,7 +144,7 @@
         <div class="quick-btn" title="Descargar HD" onclick="downloadImage()">💾</div>
         <div class="quick-btn" title="Limpiar" onclick="clearCanvasPrompt()">🗑️</div>
       </div>
-      <div class="title-text">Paint Infinit Ultimate 100X</div>
+      <div class="title-text">Paint Infinit (Voice 100X)</div>
     </div>
     <div style="display: flex; align-items: center;">
       <div id="network-status" title="Estado de Servidor">
@@ -155,12 +168,12 @@
         <div class="file-item" onclick="clearCanvasPrompt()">📄 Nuevo Lienzo (Limpiar)</div>
         <div class="file-item" onclick="location.reload()">🚪 Cambiar de Sala / Salir</div>
       </div>
-      <div class="tab active" id="tab-home-trigger">Inicio (Herramientas 100x)</div>
+      <div class="tab active" id="tab-home-trigger">Inicio (100x)</div>
+      <div class="tab tab-voice" id="tab-voice-trigger">🎙️ Voz y Lienzo</div>
       <div class="tab" id="tab-filters-trigger">Filtros Mágicos</div>
-      <div class="tab" id="tab-view-trigger">Ver / Interfaz</div>
+      <div class="tab" id="tab-view-trigger">Cursores / UI</div>
     </div>
     
-    <!-- Pestaña INICIO -->
     <div id="panel-home" class="ribbon-panel active">
       <div class="ribbon-group">
         <div class="ribbon-controls">
@@ -197,11 +210,9 @@
 
       <div class="ribbon-group">
         <div class="ribbon-controls">
-          <div class="stamp-grid" id="stamp-container">
-            <!-- Sellos inyectados por JS -->
-          </div>
+          <div class="stamp-grid" id="stamp-container"></div>
         </div>
-        <div class="ribbon-group-title">Sellos Instantáneos (Stamps)</div>
+        <div class="ribbon-group-title">Sellos Instantáneos</div>
       </div>
 
       <div class="ribbon-group">
@@ -231,7 +242,31 @@
       </div>
     </div>
 
-    <!-- Pestaña FILTROS (NUEVO) -->
+    <div id="panel-voice" class="ribbon-panel">
+      <div class="ribbon-group">
+        <div class="ribbon-controls" style="gap:10px;">
+          <button class="modal-btn green" id="btn-start-voice" onclick="voiceManager.startVoice()">🎙️ Conectar Voz</button>
+          <button class="modal-btn red" id="btn-mute-voice" onclick="voiceManager.toggleMute()" disabled>Mutear Mic</button>
+        </div>
+        <div class="ribbon-group-title">Chat de Voz Directo</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-controls" style="flex-direction:column; gap:5px; align-items:flex-start;">
+          <label><input type="checkbox" id="chk-proximity" onchange="voiceManager.toggleProximity(this.checked)"> Activar Proximidad Sonora</label>
+          <span style="font-size:9px; color:#666;">(Si te alejas en el dibujo, no los escuchas)</span>
+        </div>
+        <div class="ribbon-group-title">Audio Espacial</div>
+      </div>
+      <div class="ribbon-group" style="border-right:none;">
+        <div class="ribbon-controls" style="gap:5px;">
+          <input type="number" id="canvas-w" value="1280" style="width:50px; padding:4px;"> X 
+          <input type="number" id="canvas-h" value="720" style="width:50px; padding:4px;">
+          <button class="modal-btn" onclick="resizeCanvasEngine()" style="padding:4px 8px;">Aplicar</button>
+        </div>
+        <div class="ribbon-group-title">Resolución del Lienzo (No borra el dibujo)</div>
+      </div>
+    </div>
+
     <div id="panel-filters" class="ribbon-panel">
       <div class="ribbon-group" style="border:none; padding:10px;">
         <div class="ribbon-controls" style="gap:15px;">
@@ -240,16 +275,13 @@
           <button class="modal-btn" onclick="applyFilter('invert')">Invertir Colores</button>
           <button class="modal-btn" style="background:#e81123;" onclick="applyFilter('noise')">Añadir Ruido</button>
         </div>
-        <div class="ribbon-group-title">Aplicar a TODO el lienzo (Afecta a todos)</div>
+        <div class="ribbon-group-title">Aplicar a TODO el lienzo</div>
       </div>
     </div>
 
-    <!-- Pestaña VER / INTERFAZ -->
     <div id="panel-view" class="ribbon-panel">
       <div class="ribbon-group">
-        <div class="ribbon-controls cursor-grid" id="cursor-container">
-          <!-- Cursores inyectados por JS -->
-        </div>
+        <div class="ribbon-controls cursor-grid" id="cursor-container"></div>
         <div class="ribbon-group-title">Elige tu Cursor o usa tu Imagen Guardada</div>
       </div>
       <div class="ribbon-group" style="border-right:none;">
@@ -285,16 +317,13 @@
     <div style="display:flex;">
       <div class="status-field">📍 <span id="coords-display">0, 0px</span></div>
       <div class="status-field">💾 Auto-Guardado: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
-      <div class="status-field">👤 Sala Actual: <span id="room-display" style="font-weight:600;">-</span></div>
+      <div class="status-field">👤 Sala: <span id="room-display" style="font-weight:600;">-</span></div>
     </div>
   </div>
 
-  <!-- Modal Login Draggable -->
   <div id="login-overlay">
     <div class="window-modal" id="login-modal">
-      <div class="modal-header" id="modal-drag-handle">
-        <span>Conexión de Alta Seguridad 100X</span>
-      </div>
+      <div class="modal-header" id="modal-drag-handle"><span>Conexión de Alta Seguridad (Voz+Paint)</span></div>
       <div class="modal-body">
         <label><b>Apodo (Se guarda localmente):</b></label>
         <input type="text" id="net-username" class="modal-input" maxlength="15">
@@ -302,76 +331,73 @@
         <label><b>Sala Privada (Aísla todo):</b></label>
         <input type="text" id="net-room" class="modal-input">
 
-        <label><b>Cursor Personalizado (Sube tu Imagen vía YYF):</b></label>
+        <label><b>Cursor Personalizado (Sube Imagen vía YYF):</b></label>
         <div class="file-upload-box" onclick="document.getElementById('cursor-upload').click()">
           <span id="upload-text">Haz clic para subir un archivo de imagen (Opcional)</span>
           <input type="file" id="cursor-upload" style="display:none" accept="image/*">
         </div>
-        
         <div style="font-size:10px; color:#666;" id="saved-cursor-info"></div>
 
-        <button id="btn-connect" class="modal-btn" style="margin-top:10px;">CONECTAR Y ENTRAR AL LIENZO</button>
+        <button id="btn-connect" class="modal-btn" style="margin-top:10px;">ENTRAR AL LIENZO</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ── CONFIGURACIÓN API ──
+    // ── CONFIGURACIÓN API & ESTADOS ──
     const INFINIT_API_KEY = '68cbaf8483807fd1254db8e893d293b03430e0ca';
     const INFINIT_URL = 'https://ikelene.dev/storage/';
     const YYF_UPLOAD = 'https://yyf.mubilop.com/api/upload';
 
-    // ── ESTADO GLOBAL Y LOCALSTORAGE ──
     const state = {
-      tool: 'pencil',
-      color1: '#000000', color2: '#ffffff', activeColorTarget: 'color1',
+      tool: 'pencil', color1: '#000000', color2: '#ffffff', activeColorTarget: 'color1',
       size: 3, isDrawing: false, startX: 0, startY: 0,
       username: localStorage.getItem('paint_user') || 'ProArtist',
       room: localStorage.getItem('paint_room') || 'sala_magica',
       myCursor: localStorage.getItem('paint_cursor') || '👆',
       isCanvasDirty: false, isSavingProcessActive: false,
-      rainbowHue: 0, stampChar: '⭐'
+      rainbowHue: 0, stampChar: '⭐',
+      myX: 0, myY: 0 // Para proximidad
     };
 
-    // Pre-llenar UI con LocalStorage
-    document.getElementById('net-username').value = state.username;
-    document.getElementById('net-room').value = state.room;
-    if(state.myCursor.startsWith('http')) {
-      document.getElementById('saved-cursor-info').innerText = "Tus datos tienen un cursor de imagen guardado activo.";
-    }
+    document.getElementById('net-username').value = state.username; document.getElementById('net-room').value = state.room;
+    if(state.myCursor.startsWith('http')) document.getElementById('saved-cursor-info').innerText = "Cursor de imagen cargado.";
 
     const canvas = document.getElementById('paintCanvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     const cursorsLayer = document.getElementById('cursors-layer');
 
-    // ── UI Y ARRAYS MASIVOS (100 Cosas) ──
-    const win7Colors = [
-      '#000000','#7f7f7f','#880015','#ed1c24','#ff7f27','#fff200','#22b14c','#00a2e8','#3f48cc','#a349a4','#ff8c00','#8b4513',
-      '#ffffff','#c3c3c3','#b97a57','#ffaec9','#ffc90e','#efe4b0','#b5e61d','#99d9ea','#7092be','#c8bfe7','#ff69b4','#00fa9a'
-    ];
+    // ── GESTOR DE RESOLUCIÓN (SIN PERDER DIBUJO) ──
+    function resizeCanvasEngine() {
+      const w = parseInt(document.getElementById('canvas-w').value);
+      const h = parseInt(document.getElementById('canvas-h').value);
+      if(w>100 && h>100) {
+        // Sacar foto
+        const currentImg = ctx.getImageData(0,0, canvas.width, canvas.height);
+        // Redimensionar (esto borra el canvas nativamente)
+        canvas.width = w; canvas.height = h;
+        // Rellenar fondo y pegar foto
+        ctx.fillStyle = state.color2; ctx.fillRect(0,0,w,h);
+        ctx.putImageData(currentImg, 0, 0);
+        markCanvasDirty();
+        network.sendSysMsg(`${state.username} ha cambiado la resolución a ${w}x${h}`);
+      }
+    }
+
+    // ── UI Y ARRAYS MASIVOS ──
+    const win7Colors = ['#000000','#7f7f7f','#880015','#ed1c24','#ff7f27','#fff200','#22b14c','#00a2e8','#3f48cc','#a349a4','#ff8c00','#8b4513','#ffffff','#c3c3c3','#b97a57','#ffaec9','#ffc90e','#efe4b0','#b5e61d','#99d9ea','#7092be','#c8bfe7','#ff69b4','#00fa9a'];
     win7Colors.forEach(color => {
       const cell = document.createElement('div'); cell.className = 'color-cell'; cell.style.background = color;
       cell.onclick = () => { if (state.activeColorTarget === 'color1') { state.color1 = color; document.getElementById('color1-box').style.background = color; } else { state.color2 = color; document.getElementById('color2-box').style.background = color; } };
       document.getElementById('palette').appendChild(cell);
     });
 
-    // Inyectar 30+ Sellos
     const stamps = ['⭐','❤️','🔥','💥','💀','👽','🍕','🍔','🍉','🎈','🎉','👑','💎','⚽','🚗','🚀','🐱','🐶','🐸','🦋','🌸','🌵','☀️','🌙','⚡','💧','❄️','🎸','🎮','🎯','🎨','🎭','🧩','🧸'];
-    stamps.forEach(s => {
-      const btn = document.createElement('div'); btn.className = 'stamp-btn'; btn.innerText = s;
-      btn.onclick = () => { setTool('stamp'); state.stampChar = s; };
-      document.getElementById('stamp-container').appendChild(btn);
-    });
+    stamps.forEach(s => { const btn = document.createElement('div'); btn.className = 'stamp-btn'; btn.innerText = s; btn.onclick = () => { setTool('stamp'); state.stampChar = s; }; document.getElementById('stamp-container').appendChild(btn); });
 
-    // Inyectar Cursores Clásicos
     const cursors = ['👆','✏️','🖌️','⚔️','🪄','🎯','🚀','👾','👻','🍕'];
-    cursors.forEach(c => {
-      const btn = document.createElement('div'); btn.className = 'stamp-btn'; btn.innerText = c;
-      btn.onclick = () => { state.myCursor = c; localStorage.setItem('paint_cursor', c); };
-      document.getElementById('cursor-container').appendChild(btn);
-    });
+    cursors.forEach(c => { const btn = document.createElement('div'); btn.className = 'stamp-btn'; btn.innerText = c; btn.onclick = () => { state.myCursor = c; localStorage.setItem('paint_cursor', c); }; document.getElementById('cursor-container').appendChild(btn); });
 
-    // Pestañas
     document.getElementById('tab-file-trigger').onclick = () => { const m = document.getElementById('file-menu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; };
     document.addEventListener('click', (e) => { if (!e.target.closest('.tab-file') && !e.target.closest('#file-menu')) document.getElementById('file-menu').style.display = 'none'; });
     
@@ -380,48 +406,29 @@
       document.getElementById(triggerId).classList.add('active'); document.getElementById(panelId).classList.add('active');
     }
     document.getElementById('tab-home-trigger').onclick = () => switchTab('tab-home-trigger', 'panel-home');
+    document.getElementById('tab-voice-trigger').onclick = () => switchTab('tab-voice-trigger', 'panel-voice');
     document.getElementById('tab-filters-trigger').onclick = () => switchTab('tab-filters-trigger', 'panel-filters');
     document.getElementById('tab-view-trigger').onclick = () => switchTab('tab-view-trigger', 'panel-view');
 
-    // Herramientas binding
-    function setTool(t, el) { 
-      state.tool = t; document.querySelectorAll('.tool-grid-btn').forEach(b=>b.classList.remove('active')); 
-      if(el) el.classList.add('active'); 
-    }
-    const toolsMap = {
-      'tool-pencil': 'pencil', 'tool-eraser': 'eraser', 'tool-bucket': 'bucket', 'tool-picker': 'picker', 'tool-text': 'text', 'tool-spray': 'spray',
-      'tool-rainbow': 'rainbow', 'tool-neon': 'neon', 'tool-ghost': 'ghost',
-      'shape-line': 'line', 'shape-rect': 'rect', 'shape-circle': 'circle', 'shape-tri': 'triangle', 'shape-star': 'star', 'shape-rhombus': 'rhombus', 'shape-arrow': 'arrow', 'shape-hexa': 'hexa'
-    };
+    function setTool(t, el) { state.tool = t; document.querySelectorAll('.tool-grid-btn').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); }
+    const toolsMap = { 'tool-pencil': 'pencil', 'tool-eraser': 'eraser', 'tool-bucket': 'bucket', 'tool-picker': 'picker', 'tool-text': 'text', 'tool-spray': 'spray', 'tool-rainbow': 'rainbow', 'tool-neon': 'neon', 'tool-ghost': 'ghost', 'shape-line': 'line', 'shape-rect': 'rect', 'shape-circle': 'circle', 'shape-tri': 'triangle', 'shape-star': 'star', 'shape-rhombus': 'rhombus', 'shape-arrow': 'arrow', 'shape-hexa': 'hexa' };
     for(let id in toolsMap) { document.getElementById(id).onclick = (e) => setTool(toolsMap[id], e.currentTarget); }
 
-    document.querySelectorAll('#size-selector .size-option').forEach(opt => {
-      opt.onclick = (e) => { document.querySelectorAll('#size-selector .size-option').forEach(o=>o.classList.remove('active')); e.currentTarget.classList.add('active'); state.size = parseInt(e.currentTarget.getAttribute('data-size')); };
-    });
-
+    document.querySelectorAll('#size-selector .size-option').forEach(opt => { opt.onclick = (e) => { document.querySelectorAll('#size-selector .size-option').forEach(o=>o.classList.remove('active')); e.currentTarget.classList.add('active'); state.size = parseInt(e.currentTarget.getAttribute('data-size')); }; });
     document.getElementById('chk-chat').onchange = (e) => { document.getElementById('chat-sidebar').style.display = e.target.checked ? 'flex' : 'none'; };
     function toggleGrid(chk) { document.getElementById('grid-overlay').style.display = chk.checked ? 'block' : 'none'; }
 
-    // ── MOTOR DE DIBUJO AVANZADO ──
+    // ── MOTOR DE DIBUJO ──
     let snapshot = null;
     function getCoords(e) { const r = canvas.getBoundingClientRect(); return { x: Math.round((e.clientX - r.left) * (canvas.width / r.width)), y: Math.round((e.clientY - r.top) * (canvas.height / r.height)) }; }
 
     function drawLineLocal(x0, y0, x1, y1, color, size, toolType = 'pencil') {
       ctx.beginPath(); ctx.lineCap='round'; ctx.lineJoin='round';
-      
       if(toolType === 'eraser') { ctx.lineWidth=size; ctx.strokeStyle=state.color2; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); return; }
-      if(toolType === 'spray') {
-        ctx.fillStyle = color; for(let i=0; i<size*4; i++) { const r = Math.random() * size * 2; const ang = Math.random() * Math.PI * 2; ctx.fillRect(x1 + r * Math.cos(ang), y1 + r * Math.sin(ang), 1, 1); } return;
-      }
+      if(toolType === 'spray') { ctx.fillStyle = color; for(let i=0; i<size*4; i++) { const r = Math.random() * size * 2; const ang = Math.random() * Math.PI * 2; ctx.fillRect(x1 + r * Math.cos(ang), y1 + r * Math.sin(ang), 1, 1); } return; }
       if(toolType === 'ghost') { ctx.globalAlpha = 0.1; ctx.lineWidth=size*2; ctx.strokeStyle=color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.globalAlpha = 1.0; return; }
-      if(toolType === 'neon') {
-        ctx.lineWidth=size; ctx.strokeStyle='#fff'; ctx.shadowBlur = size*3; ctx.shadowColor = color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
-        ctx.shadowBlur = 0; return;
-      }
-      if(toolType === 'rainbow') {
-        state.rainbowHue = (state.rainbowHue + 5) % 360; color = `hsl(${state.rainbowHue}, 100%, 50%)`;
-      }
-      
+      if(toolType === 'neon') { ctx.lineWidth=size; ctx.strokeStyle='#fff'; ctx.shadowBlur = size*3; ctx.shadowColor = color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.shadowBlur = 0; return; }
+      if(toolType === 'rainbow') { state.rainbowHue = (state.rainbowHue + 5) % 360; color = `hsl(${state.rainbowHue}, 100%, 50%)`; }
       ctx.lineWidth=size; ctx.strokeStyle=color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
     }
 
@@ -436,11 +443,10 @@
       else if (type === 'arrow') { ctx.moveTo(x0, y0+h/3); ctx.lineTo(x0+w/2, y0+h/3); ctx.lineTo(x0+w/2, y0); ctx.lineTo(x1, y0+h/2); ctx.lineTo(x0+w/2, y1); ctx.lineTo(x0+w/2, y0+(h/3)*2); ctx.lineTo(x0, y0+(h/3)*2); ctx.closePath(); }
       else if (type === 'hexa') { const r = Math.sqrt(w*w+h*h)/2; const cx=x0+w/2, cy=y0+h/2; for(let i=0;i<6;i++){ const a=Math.PI/3*i; ctx[i===0?'moveTo':'lineTo'](cx+r*Math.cos(a), cy+r*Math.sin(a)); } ctx.closePath(); }
       else if (type === 'star') { const r = Math.sqrt(w*w+h*h); let rot=Math.PI/2*3; let x=x0, y=y0, step=Math.PI/5; for(let i=0;i<5;i++){ ctx.lineTo(x+Math.cos(rot)*r, y+Math.sin(rot)*r); rot+=step; ctx.lineTo(x+Math.cos(rot)*(r/2.5), y+Math.sin(rot)*(r/2.5)); rot+=step; } ctx.closePath(); }
-      else if (type === 'stamp') { ctx.font = `${size*10}px Arial`; ctx.fillText(extra, x1, y1); return; } // Stamp especial
+      else if (type === 'stamp') { ctx.font = `${size*10}px Arial`; ctx.fillText(extra, x1, y1); return; } 
       ctx.stroke();
     }
 
-    // Filtros de Imagen Mágicos
     function applyFilter(type) {
       const imgData = ctx.getImageData(0,0,canvas.width,canvas.height); const d = imgData.data;
       for(let i=0; i<d.length; i+=4) {
@@ -452,8 +458,7 @@
         else if(type==='invert') { d[i]=255-d[i]; d[i+1]=255-d[i+1]; d[i+2]=255-d[i+2]; }
         else if(type==='noise') { const n=(Math.random()-0.5)*100; d[i]+=n; d[i+1]+=n; d[i+2]+=n; }
       }
-      ctx.putImageData(imgData, 0, 0); markCanvasDirty();
-      network.sendDrawAction({ type: 'filter', filter: type });
+      ctx.putImageData(imgData, 0, 0); markCanvasDirty(); network.sendDrawAction({ type: 'filter', filter: type });
     }
 
     function floodFill(startX, startY, fillColor) {
@@ -473,32 +478,26 @@
       ctx.putImageData(imageData, 0, 0);
     }
 
-    // Interacciones Ratón
     function handleDrawStart(coords, isRightClick) {
       if (!network.connected) return;
+      state.myX = coords.x; state.myY = coords.y; voiceManager.updateProximity(); // Voz proximidad
       let activeColor = isRightClick ? state.color2 : state.color1;
       state.isDrawing = true; state.startX = coords.x; state.startY = coords.y;
       snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
       
       if (state.tool === 'bucket') { floodFill(state.startX, state.startY, activeColor); network.sendDrawAction({ type: 'bucket', x: state.startX, y: state.startY, color: activeColor }); state.isDrawing = false; markCanvasDirty(); } 
-      else if (state.tool === 'picker') {
-        const d = ctx.getImageData(state.startX, state.startY, 1, 1).data; const hex = "#" + ((1<<24)+(d[0]<<16)+(d[1]<<8)+d[2]).toString(16).slice(1);
-        if(state.activeColorTarget === 'color1') { state.color1 = hex; document.getElementById('color1-box').style.background = hex; } else { state.color2 = hex; document.getElementById('color2-box').style.background = hex; }
-        state.isDrawing = false;
-      } 
-      else if (state.tool === 'text') {
-        state.isDrawing = false; const t = prompt("Texto:");
-        if(t) { ctx.font = `bold ${state.size*5 + 10}px Arial`; ctx.fillStyle = activeColor; ctx.fillText(t, coords.x, coords.y); network.sendDrawAction({ type: 'text', txt: t, x: coords.x, y: coords.y, color: activeColor, size: state.size }); markCanvasDirty(); }
-      }
-      else if (state.tool === 'stamp') {
-        drawShapeLocal('stamp', 0, 0, coords.x, coords.y, activeColor, state.size, state.stampChar);
-        network.sendDrawAction({ type: 'shape', shapeType: 'stamp', x0:0, y0:0, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, extra: state.stampChar }); markCanvasDirty();
-      }
+      else if (state.tool === 'picker') { const d = ctx.getImageData(state.startX, state.startY, 1, 1).data; const hex = "#" + ((1<<24)+(d[0]<<16)+(d[1]<<8)+d[2]).toString(16).slice(1); if(state.activeColorTarget === 'color1') { state.color1 = hex; document.getElementById('color1-box').style.background = hex; } else { state.color2 = hex; document.getElementById('color2-box').style.background = hex; } state.isDrawing = false; } 
+      else if (state.tool === 'text') { state.isDrawing = false; const t = prompt("Texto:"); if(t) { ctx.font = `bold ${state.size*5 + 10}px Arial`; ctx.fillStyle = activeColor; ctx.fillText(t, coords.x, coords.y); network.sendDrawAction({ type: 'text', txt: t, x: coords.x, y: coords.y, color: activeColor, size: state.size }); markCanvasDirty(); } }
+      else if (state.tool === 'stamp') { drawShapeLocal('stamp', 0, 0, coords.x, coords.y, activeColor, state.size, state.stampChar); network.sendDrawAction({ type: 'shape', shapeType: 'stamp', x0:0, y0:0, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, extra: state.stampChar }); markCanvasDirty(); }
     }
 
     function handleDrawMove(coords, isRightClick) {
       document.getElementById('coords-display').innerText = `${coords.x}, ${coords.y}px`;
-      if (network.connected) network.sendCursor(coords.x, coords.y, state.myCursor);
+      state.myX = coords.x; state.myY = coords.y; 
+      if (network.connected) {
+        network.sendCursor(coords.x, coords.y, state.myCursor);
+        voiceManager.updateProximity(); // Actualizar proximidad constantemente
+      }
       if (!state.isDrawing) return;
       let activeColor = isRightClick ? state.color2 : state.color1;
       if(state.tool === 'rainbow') activeColor = `hsl(${state.rainbowHue}, 100%, 50%)`;
@@ -515,9 +514,7 @@
     function handleDrawEnd(coords, isRightClick) {
       if (!state.isDrawing) return; state.isDrawing = false;
       let activeColor = isRightClick ? state.color2 : state.color1;
-      if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus', 'arrow', 'hexa'].includes(state.tool)) {
-        network.sendDrawAction({ type: 'shape', shapeType: state.tool, x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size }); markCanvasDirty();
-      }
+      if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus', 'arrow', 'hexa'].includes(state.tool)) { network.sendDrawAction({ type: 'shape', shapeType: state.tool, x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size }); markCanvasDirty(); }
     }
 
     canvas.onmousedown = (e) => handleDrawStart(getCoords(e), e.button === 2); canvas.onmousemove = (e) => handleDrawMove(getCoords(e), e.buttons === 2); canvas.onmouseup = (e) => handleDrawEnd(getCoords(e), e.button === 2);
@@ -526,10 +523,122 @@
     canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(getCoords(e.touches[0]), false); }, { passive: false });
     canvas.addEventListener('touchend', (e) => { e.preventDefault(); if(e.changedTouches.length>0) handleDrawEnd(getCoords(e.changedTouches[0]), false); else state.isDrawing = false; }, { passive: false });
 
-    // ── RED CLOUD32 (AISLADA + RECONEXIÓN AUTOMÁTICA) ──
+    // ── GESTOR DE VOZ (PEERJS + PROXIMIDAD + ESTIRAMIENTO) ──
+    class VoiceManager {
+      constructor() {
+        this.peer = null; this.stream = null; this.calls = {}; this.audioEls = {}; this.analyzers = {}; this.audioCtx = null;
+        this.isMuted = false; this.proximityEnabled = false; this.maxDist = 600;
+        this.peerPositions = {}; // Guarda {x, y} de los demás extraídos de network.syncCursor
+        
+        // Loop de estiramiento visual por ruido
+        setInterval(() => this.stretchCursorsByVolume(), 50);
+      }
+
+      async startVoice() {
+        try {
+          this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          
+          this.peer = new Peer('PNT_VC_' + state.room + '_' + state.username, { host: '0.peerjs.com', port: 443, secure: true });
+          
+          this.peer.on('open', id => {
+            document.getElementById('btn-start-voice').innerText = "✅ Voz Conectada";
+            document.getElementById('btn-start-voice').style.background = "#107c41";
+            document.getElementById('btn-mute-voice').disabled = false;
+            document.getElementById('status-indicator').classList.add('voice-active');
+            
+            // Llamar a los que ya estén conectados
+            network.sendSysMsg(`${state.username} se unió al chat de voz.`);
+            this.peer.listAllPeers((peers) => {
+              peers.forEach(p => { if(p.startsWith('PNT_VC_' + state.room) && p !== id) this.makeCall(p); });
+            });
+          });
+
+          this.peer.on('call', call => {
+            call.answer(this.stream);
+            call.on('stream', remoteStream => this.handleRemoteStream(call.peer, remoteStream));
+          });
+        } catch(e) { alert("Error accediendo al micrófono. Da permisos."); }
+      }
+
+      makeCall(peerId) {
+        const call = this.peer.call(peerId, this.stream);
+        this.calls[peerId] = call;
+        call.on('stream', remoteStream => this.handleRemoteStream(peerId, remoteStream));
+      }
+
+      async handleRemoteStream(peerId, stream) {
+        if(this.audioEls[peerId]) return;
+        const audio = new Audio(); audio.srcObject = stream; audio.autoplay = true;
+        this.audioEls[peerId] = audio;
+        
+        // Setup Analyzer para que el cursor se estire
+        if(this.audioCtx.state === 'suspended') await this.audioCtx.resume();
+        const source = this.audioCtx.createMediaStreamSource(stream);
+        const analyzer = this.audioCtx.createAnalyser();
+        analyzer.fftSize = 256;
+        source.connect(analyzer);
+        this.analyzers[peerId] = { analyzer, data: new Uint8Array(analyzer.frequencyBinCount) };
+      }
+
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        if(this.stream) this.stream.getAudioTracks().forEach(t => t.enabled = !this.isMuted);
+        const btn = document.getElementById('btn-mute-voice');
+        btn.innerText = this.isMuted ? "Desmutear Mic" : "Mutear Mic";
+        btn.className = this.isMuted ? "modal-btn green" : "modal-btn red";
+      }
+
+      toggleProximity(val) { this.proximityEnabled = val; this.updateProximity(); }
+
+      updateProximity() {
+        if(!this.proximityEnabled) {
+          Object.values(this.audioEls).forEach(a => a.volume = 1.0); return;
+        }
+        // Calcula distancia de mi cursor (state.myX, state.myY) a los peers
+        for(let peerId in this.audioEls) {
+          const rawUsername = peerId.replace('PNT_VC_' + state.room + '_', '');
+          const pos = this.peerPositions[rawUsername];
+          if(pos) {
+            const dist = Math.hypot(pos.x - state.myX, pos.y - state.myY);
+            let vol = 1 - (dist / this.maxDist);
+            if(vol < 0) vol = 0; if(vol > 1) vol = 1;
+            this.audioEls[peerId].volume = vol;
+          }
+        }
+      }
+
+      // LA MAGIA: Estirar los cursores (DOM Nodes) si están hablando
+      stretchCursorsByVolume() {
+        for(let peerId in this.analyzers) {
+          const entry = this.analyzers[peerId];
+          entry.analyzer.getByteFrequencyData(entry.data);
+          let sum = 0; for(let i=0; i<entry.data.length; i++) sum += entry.data[i];
+          const avg = sum / entry.data.length; // 0 a 255
+          
+          const rawUsername = peerId.replace('PNT_VC_' + state.room + '_', '');
+          const cursorNode = network.remoteCursors[rawUsername];
+          
+          if(cursorNode) {
+            const iconDiv = cursorNode.querySelector('.remote-icon');
+            if(iconDiv) {
+              // Estiramiento: Si hay ruido, scaleX sube (se ensancha), scaleY baja (se aplasta)
+              const stretchFactor = avg / 255; // 0.0 a 1.0
+              const sX = 1 + (stretchFactor * 0.8); 
+              const sY = 1 - (stretchFactor * 0.3);
+              // Aplicar Transform al DOM del icono (no a la etiqueta del nombre)
+              iconDiv.style.transform = `scale(${sX}, ${sY})`;
+            }
+          }
+        }
+      }
+    }
+    const voiceManager = new VoiceManager();
+
+    // ── RED CLOUD32 (DIBUJO Y CHAT) ──
     class Cloud32NetworkClient {
       constructor() { this.ws = null; this.connected = false; this.remoteCursors = {}; this.reconnectTimer = null; }
-      connect(user, room, isReconnect = false) {
+      connect(user, room) {
         state.username = user; state.room = room;
         document.getElementById('room-display').innerText = room; document.getElementById('chat-room-name').innerText = `[${room}]`;
         this.ws = new WebSocket('wss://cloud-link-server--jere32game.replit.app');
@@ -538,7 +647,6 @@
           document.getElementById('status-indicator').className = 'status-dot online';
           document.getElementById('network-text').innerText = `En línea`;
           this._send({ cmd: 'setid', val: state.username }); this._send({ cmd: 'link', val: [state.room] });
-          if(isReconnect) appendSysMsg("Conexión restaurada."); else this.sendSysMsg(`${state.username} ha entrado a la sala.`);
         };
         this.ws.onmessage = (evt) => {
           try {
@@ -547,7 +655,7 @@
             if (msg.cmd === 'gmsg') {
               const sender = msg.origin?.username || 'Invitado'; if (sender === state.username) return;
               const p = JSON.parse(msg.val);
-              if (p.room !== state.room) return; // AISLAMIENTO TOTAL
+              if (p.room !== state.room) return; 
               
               if (p.n7_action === 'cursor') { this.syncCursor(sender, p.x, p.y, p.c); }
               else if (p.n7_action === 'draw') {
@@ -565,9 +673,8 @@
           } catch(e) {}
         };
         this.ws.onclose = () => { 
-          this.connected = false; document.getElementById('status-indicator').className = 'status-dot reconnecting';
-          document.getElementById('network-text').innerText = 'Reconectando...'; appendSysMsg("Desconectado. Intentando reconectar...");
-          this.reconnectTimer = setTimeout(() => { if(state.username && state.room) this.connect(state.username, state.room, true); }, 3000);
+          this.connected = false; document.getElementById('status-indicator').className = 'status-dot';
+          this.reconnectTimer = setTimeout(() => { if(state.username && state.room) this.connect(state.username, state.room); }, 3000);
         };
       }
       _send(obj) { if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(obj)); }
@@ -577,6 +684,9 @@
       sendSysMsg(txt) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'sys', room: state.room, text: txt }) }); }
 
       syncCursor(user, x, y, cursorData) {
+        // Guardar pos para el calculo de volumen de proximidad
+        voiceManager.peerPositions[user] = {x, y};
+
         let node = this.remoteCursors[user];
         if (!node) {
           node = document.createElement('div'); node.className = 'remote-cursor';
@@ -584,14 +694,19 @@
           cursorsLayer.appendChild(node); this.remoteCursors[user] = node;
         }
         const iconDiv = node.querySelector('.remote-icon');
-        if(cursorData && cursorData.startsWith('http')) iconDiv.innerHTML = `<img src="${cursorData}">`; else iconDiv.innerText = cursorData || '👆';
+        // Actualizar icono sin destruir el div para no romper la animacion de voz
+        if(cursorData && cursorData.startsWith('http')) {
+            if(!iconDiv.querySelector('img')) iconDiv.innerHTML = `<img src="${cursorData}">`;
+        } else {
+            if(iconDiv.innerText !== cursorData) iconDiv.innerText = cursorData || '👆';
+        }
         node.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         clearTimeout(node.killTimeout); node.style.opacity = "1"; node.killTimeout = setTimeout(() => { node.style.opacity = "0"; }, 4000);
       }
     }
     const network = new Cloud32NetworkClient();
 
-    // ── CHAT ──
+    // ── CHAT UI ──
     const chatContainer = document.getElementById('chat-messages');
     function appendChatMsg(user, text, isSelf=false) {
       const d = new Date(); const time = `${d.getHours()}:${d.getMinutes() < 10 ? '0' : ''}${d.getMinutes()}`;
@@ -599,38 +714,26 @@
       b.innerHTML = `<div class="msg-user">${user} <span style="font-weight:normal; color:#888;">${time}</span></div><span>${text}</span>`;
       chatContainer.appendChild(b); chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    function appendSysMsg(text) {
-      const b = document.createElement('div'); b.className = 'msg-sys'; b.innerText = text;
-      chatContainer.appendChild(b); chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    function appendSysMsg(text) { const b = document.createElement('div'); b.className = 'msg-sys'; b.innerText = text; chatContainer.appendChild(b); chatContainer.scrollTop = chatContainer.scrollHeight; }
     function handleSendChat() { const txt = document.getElementById('chat-input').value.trim(); if(txt) { network.sendChat(txt); appendChatMsg(state.username, txt, true); document.getElementById('chat-input').value = ''; } }
-    document.getElementById('btn-send-chat').onclick = handleSendChat;
-    document.getElementById('chat-input').onkeydown = (e) => { if(e.key === 'Enter') handleSendChat(); };
+    document.getElementById('btn-send-chat').onclick = handleSendChat; document.getElementById('chat-input').onkeydown = (e) => { if(e.key === 'Enter') handleSendChat(); };
 
     // ── GUARDADO, DESCARGAS Y YYF API ──
-    function downloadImage() { const a = document.createElement('a'); a.download = `Paint_100x_${state.room}.png`; a.href = canvas.toDataURL('image/png'); a.click(); document.getElementById('file-menu').style.display='none';}
-    function downloadChat() { 
-      let text = "--- HISTORIAL DE CHAT ---\n";
-      document.querySelectorAll('.msg-bubble, .msg-sys').forEach(el => text += el.innerText + "\n");
-      const a = document.createElement('a'); a.download = `Chat_${state.room}.txt`; a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text); a.click(); document.getElementById('file-menu').style.display='none';
-    }
-    function clearCanvasPrompt() { if(confirm("¿Borrar todo el lienzo para todos?")) { ctx.fillStyle=state.color2; ctx.fillRect(0,0,canvas.width,canvas.height); network.sendDrawAction({ type: 'clear' }); markCanvasDirty(); document.getElementById('file-menu').style.display='none'; } }
+    function downloadImage() { const a = document.createElement('a'); a.download = `Paint_Collab.png`; a.href = canvas.toDataURL('image/png'); a.click(); document.getElementById('file-menu').style.display='none';}
+    function downloadChat() { let text = "--- CHAT ---\n"; document.querySelectorAll('.msg-bubble, .msg-sys').forEach(el => text += el.innerText + "\n"); const a = document.createElement('a'); a.download = `Chat.txt`; a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text); a.click(); document.getElementById('file-menu').style.display='none'; }
+    function clearCanvasPrompt() { if(confirm("¿Borrar todo el lienzo?")) { ctx.fillStyle=state.color2; ctx.fillRect(0,0,canvas.width,canvas.height); network.sendDrawAction({ type: 'clear' }); markCanvasDirty(); document.getElementById('file-menu').style.display='none'; } }
     function markCanvasDirty() { state.isCanvasDirty = true; }
 
-    // UPLOAD CURSOR A YYF
     document.getElementById('cursor-upload').onchange = async (e) => {
       const file = e.target.files[0]; if(!file) return;
-      document.getElementById('upload-text').innerText = "Subiendo imagen a YYF...";
+      document.getElementById('upload-text').innerText = "Subiendo a YYF...";
       try {
         const fd = new FormData(); fd.append('file', file);
-        const res = await fetch(YYF_UPLOAD, { method: 'POST', body: fd });
-        const data = await res.json();
+        const res = await fetch(YYF_UPLOAD, { method: 'POST', body: fd }); const data = await res.json();
         const url = 'https://yyf.mubilop.com' + data.fileUrl;
-        state.myCursor = url;
-        localStorage.setItem('paint_cursor', url);
-        document.getElementById('upload-text').innerText = "¡Imagen lista! (" + file.name + ")";
-        document.getElementById('saved-cursor-info').innerText = "Cursor de imagen guardado correctamente.";
-      } catch(err) { document.getElementById('upload-text').innerText = "Error al subir. Intenta de nuevo."; }
+        state.myCursor = url; localStorage.setItem('paint_cursor', url);
+        document.getElementById('upload-text').innerText = "¡Imagen lista! (" + file.name + ")"; document.getElementById('saved-cursor-info').innerText = "Cursor guardado.";
+      } catch(err) { document.getElementById('upload-text').innerText = "Error al subir."; }
     };
 
     // SERVER-INFINIT DB
@@ -672,12 +775,7 @@
     document.getElementById('btn-connect').onclick = async () => {
       const user = document.getElementById('net-username').value.trim(); const room = document.getElementById('net-room').value.trim();
       if (!user || !room) { alert("Completa tu nombre y sala crack."); return; }
-      
-      // Guardar en LocalStorage
-      localStorage.setItem('paint_user', user);
-      localStorage.setItem('paint_room', room);
-      // el cursor se guarda automáticamente en su propia función
-      
+      localStorage.setItem('paint_user', user); localStorage.setItem('paint_room', room);
       ctx.fillStyle = state.color2; ctx.fillRect(0, 0, canvas.width, canvas.height);
       await loadRoomImage(room); network.connect(user, room);
     };
