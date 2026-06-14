@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Paint Infinit Ultimate (Windows 7 Edition)</title>
+  <title>Paint Infinit Ultimate 100X (Windows 7 Edition)</title>
   <style>
-    /* ── DISEÑO AERO / WINDOWS 7 + NUEVAS FUNCIONES ── */
+    /* ── DISEÑO AERO / WINDOWS 7 + EXPANSIÓN 100X ── */
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 12px; background: #eed; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
@@ -16,117 +16,110 @@
     .quick-access-bar { display: flex; align-items: center; gap: 4px; margin-right: 10px; padding-right: 8px; border-right: 1px solid rgba(0,0,0,0.15); }
     .quick-btn { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; border: 1px solid transparent; font-size: 13px; }
     .quick-btn:hover { background: rgba(255,255,255,0.6); border-color: #a0b0c5; }
-    .title-text { font-weight: 500; color: #1e395b; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+    .title-text { font-weight: 500; color: #1e395b; font-size: 12px; white-space: nowrap; }
 
     .window-controls { display: flex; height: 100%; align-items: flex-start; }
     .win-btn { width: 45px; height: 22px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; font-size: 14px; font-family: monospace; color: #4c4c4c; cursor: pointer; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; }
     .win-btn:hover { background: rgba(255, 255, 255, 0.4); }
     .win-btn.close-btn:hover { background: #e81123; color: white; }
 
-    #network-status { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #3e5675; margin-right: 5px; background: rgba(255,255,255,0.4); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); }
+    #network-status { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #3e5675; margin-right: 5px; background: rgba(255,255,255,0.4); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #e81123; box-shadow: 0 0 3px #e81123; flex-shrink: 0; }
     .status-dot.online { background: #107c41; box-shadow: 0 0 5px #107c41; }
     .status-dot.saving { background: #ffb900; box-shadow: 0 0 5px #ffb900; animation: pulse 1s infinite; }
+    .status-dot.reconnecting { background: #0078d7; box-shadow: 0 0 5px #0078d7; animation: blink 0.5s infinite; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
 
     #ribbon { background: #f2f5f9; border-bottom: 1px solid #b9c9da; display: flex; flex-direction: column; position: relative; z-index: 100; flex-shrink: 0; }
     #ribbon-tabs { display: flex; padding-left: 4px; background: linear-gradient(to bottom, #f5f8fc, #e3ecf7); border-bottom: 1px solid #cbd9e9; height: 30px; align-items: flex-end; }
-    .tab { padding: 4px 16px; border: 1px solid transparent; border-bottom: none; border-top-left-radius: 4px; border-top-right-radius: 4px; color: #333; cursor: pointer; font-size: 12px; margin-bottom: -1px; height: 25px; display: flex; align-items: center; position: relative; }
+    .tab { padding: 4px 16px; border: 1px solid transparent; border-bottom: none; border-top-left-radius: 4px; border-top-right-radius: 4px; color: #333; cursor: pointer; font-size: 12px; margin-bottom: -1px; height: 25px; display: flex; align-items: center; }
     .tab:hover { background: rgba(255,255,255,0.5); }
     .tab.active { background: #f2f5f9; border-color: #b9c9da; border-bottom: 1px solid #f2f5f9; font-weight: bold; position: relative; z-index: 5; color: #000; }
     
-    /* MENÚ ARCHIVO RECUPERADO */
-    .tab-file { background: linear-gradient(to bottom, #1b5fa7, #2679c1); color: white !important; font-weight: bold; border-radius: 2px; padding: 4px 14px; height: 24px; margin-right: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3); }
+    .tab-file { background: linear-gradient(to bottom, #1b5fa7, #2679c1); color: white !important; font-weight: bold; border-radius: 2px; padding: 4px 14px; height: 24px; margin-right: 6px; }
     .tab-file:hover { background: linear-gradient(to bottom, #358be9, #236cb8); }
-    #file-menu { display: none; position: absolute; top: 30px; left: 0; background: #fdfdfd; border: 1px solid #96a9bd; box-shadow: 2px 3px 8px rgba(0,0,0,0.2); z-index: 1000; width: 200px; padding: 2px; flex-direction: column; }
+    #file-menu { display: none; position: absolute; top: 30px; left: 0; background: #fdfdfd; border: 1px solid #96a9bd; box-shadow: 2px 3px 8px rgba(0,0,0,0.2); z-index: 1000; width: 220px; padding: 2px; flex-direction: column; }
     .file-item { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .file-item:hover { background: #eaf2fb; outline: 1px solid #b8d6fb; }
 
-    .ribbon-panel { display: none; height: 105px; padding: 4px; gap: 2px; background: linear-gradient(to bottom, #f5f8f9 0%, #e6ecf5 100%); overflow-x: auto; overflow-y: hidden; white-space: nowrap; }
+    .ribbon-panel { display: none; height: 110px; padding: 4px; gap: 2px; background: linear-gradient(to bottom, #f5f8f9 0%, #e6ecf5 100%); overflow-x: auto; overflow-y: hidden; white-space: nowrap; }
     .ribbon-panel.active { display: flex; }
-    .ribbon-panel::-webkit-scrollbar { height: 4px; }
+    .ribbon-panel::-webkit-scrollbar { height: 6px; }
     .ribbon-panel::-webkit-scrollbar-thumb { background: #b9c9da; border-radius: 4px; }
 
     .ribbon-group { border-right: 1px solid #d9e3f0; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 0 6px; position: relative; flex-shrink: 0; }
-    .ribbon-group-title { font-size: 10px; color: #66788f; margin-top: auto; padding-top: 2px; text-align: center; width: 100%; border-top: 1px solid transparent; }
+    .ribbon-group-title { font-size: 10px; color: #66788f; margin-top: auto; padding-top: 2px; text-align: center; width: 100%; }
     .ribbon-controls { display: flex; gap: 4px; align-items: center; flex-grow: 1; }
 
-    .tool-grid { display: grid; grid-template-columns: repeat(3, 26px); gap: 2px; }
+    .tool-grid { display: grid; grid-template-columns: repeat(4, 26px); gap: 2px; }
     .tool-grid-btn { border: 1px solid transparent; background: transparent; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; font-size: 14px; }
     .tool-grid-btn:hover { background: #eaf2fb; border-color: #b8d6fb; }
     .tool-grid-btn.active { background: #cce4f7; border-color: #a4c9eb; box-shadow: inset 0 0 2px rgba(0,0,0,0.1); }
 
-    .tool-btn-large { border: 1px solid transparent; background: transparent; padding: 4px; border-radius: 3px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 48px; height: 68px; }
-    .tool-btn-large:hover { background: #eaf2fb; border-color: #b8d6fb; }
-    .tool-btn-large.active { background: #cce4f7; border-color: #a4c9eb; }
-    .tool-btn-large .icon { font-size: 24px; line-height: 1; }
-    .tool-btn-large span { font-size: 10px; margin-top: 4px; color: #222; text-align: center; }
-
-    #size-selector { display: flex; flex-direction: column; gap: 5px; width: 65px; padding: 4px; background: white; border: 1px solid #cbd5e1; border-radius: 2px; }
-    .size-option { height: 12px; display: flex; align-items: center; cursor: pointer; padding: 2px; border: 1px solid transparent; width: 100%; }
-    .size-option:hover { background: #eaf2fb; border-color: #b8d6fb; }
+    /* Selección de tamaño expandida */
+    #size-selector { display: flex; flex-direction: column; gap: 2px; width: 65px; padding: 2px; background: white; border: 1px solid #cbd5e1; }
+    .size-option { height: 14px; display: flex; align-items: center; cursor: pointer; padding: 2px; border: 1px solid transparent; }
+    .size-option:hover { background: #eaf2fb; }
     .size-option.active { background: #cce4f7; border-color: #a4c9eb; }
     .size-line { background: #111; width: 100%; border-radius: 1px; }
 
     .color-section { display: flex; gap: 8px; align-items: center; }
-    .color-boxes-stack { display: flex; position: relative; width: 48px; height: 48px; margin-right: 4px; }
-    .color-preview-box { width: 28px; height: 28px; border: 1px solid #7a7a7a; position: absolute; box-shadow: 1px 1px 2px rgba(0,0,0,0.1); cursor: pointer; }
+    .color-boxes-stack { display: flex; position: relative; width: 40px; height: 40px; }
+    .color-preview-box { width: 24px; height: 24px; border: 1px solid #7a7a7a; position: absolute; cursor: pointer; }
     #color1-box { background: #000000; top: 0; left: 0; z-index: 10; }
     #color2-box { background: #ffffff; bottom: 0; right: 0; z-index: 5; }
     .color-preview-box.active { border: 2px solid #307ec9; z-index: 12; }
     
-    .color-grid { display: grid; grid-template-columns: repeat(12, 16px); grid-template-rows: repeat(2, 16px); gap: 3px; }
+    .color-grid { display: grid; grid-template-columns: repeat(12, 16px); gap: 2px; }
     .color-cell { width: 16px; height: 16px; border: 1px solid #a0a0a0; cursor: pointer; border-radius: 1px; }
     .color-cell:hover { transform: scale(1.2); z-index: 20; box-shadow: 0 0 3px rgba(0,0,0,0.5); }
 
-    /* MENU CURSORES PERSONALIZADOS */
-    .cursor-grid { display: grid; grid-template-columns: repeat(4, 28px); gap: 2px; }
-    .cursor-btn { font-size: 18px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid transparent; border-radius: 3px; }
-    .cursor-btn:hover { background: #eaf2fb; border-color: #b8d6fb; }
-    .cursor-btn.active { background: #cce4f7; border-color: #a4c9eb; }
+    /* Sellos y Cursores */
+    .stamp-grid, .cursor-grid { display: grid; grid-template-columns: repeat(6, 26px); gap: 2px; max-height: 70px; overflow-y: auto; padding-right: 4px; }
+    .stamp-btn { font-size: 16px; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 1px solid transparent; }
+    .stamp-btn:hover { background: #eaf2fb; border-color: #b8d6fb; }
 
+    /* Área Principal */
     #main-content { display: flex; flex-grow: 1; overflow: hidden; flex-direction: row; }
-
     #workspace { flex-grow: 1; background: #cbd3e3; overflow: auto; display: flex; justify-content: flex-start; align-items: flex-start; padding: 15px; position: relative; }
-    #canvas-container { background: white; box-shadow: 3px 3px 10px rgba(0,0,0,0.2); position: relative; border: 1px solid #6d7b93; display: inline-block; transform-origin: top left; transition: transform 0.1s ease-out; }
+    #canvas-container { background: white; box-shadow: 3px 3px 10px rgba(0,0,0,0.2); position: relative; border: 1px solid #6d7b93; display: inline-block; }
     canvas { display: block; cursor: crosshair; background: #ffffff; touch-action: none; }
 
+    /* Chat */
     #chat-sidebar { width: 280px; background: #f0f4f9; border-left: 1px solid #b9c9da; display: flex; flex-direction: column; flex-shrink: 0; }
     #chat-header { background: linear-gradient(to bottom, #1b5fa7, #2679c1); color: white; padding: 6px 10px; font-weight: bold; font-size: 11px; display: flex; justify-content: space-between; }
     #chat-messages { flex-grow: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
-    .msg-bubble { background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #d9e3f0; align-self: flex-start; max-width: 90%; word-wrap: break-word; }
+    .msg-bubble { background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #d9e3f0; align-self: flex-start; max-width: 90%; word-wrap: break-word; position:relative; }
     .msg-bubble.self { background: #dcf8c6; border-color: #c4e6b0; align-self: flex-end; }
     .msg-user { font-size: 9px; font-weight: bold; color: #1e395b; margin-bottom: 2px; }
+    .msg-sys { text-align: center; font-size: 10px; color: #666; font-style: italic; background: none; border: none; align-self: center; }
     #chat-input-container { padding: 8px; background: #e5edf6; border-top: 1px solid #d9e3f0; display:flex; gap:5px; flex-wrap: wrap; }
     #chat-input { flex-grow: 1; padding: 5px; border: 1px solid #b9c9da; border-radius: 2px; outline: none; }
-    .emoji-btn { cursor: pointer; padding: 2px 4px; border: 1px solid #b9c9da; background: white; border-radius: 2px; }
 
-    /* CURSORES REMOTOS PERSONALIZADOS */
+    /* Cursores Remotos */
     #cursors-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
     .remote-cursor { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100000; transform: translate3d(0, 0, 0); will-change: transform; transition: opacity 0.2s; display: flex; flex-direction: column; align-items: flex-start; }
     .remote-icon { font-size: 20px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transform: translate(-5px, -5px); }
+    .remote-icon img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid white; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); object-fit: cover; }
     .remote-label { background: rgba(30, 57, 91, 0.85); color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 3px; white-space: nowrap; margin-left: 10px; box-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
 
+    /* Barra de Estado */
     #status-bar { height: 24px; background: #f2f5f9; border-top: 1px solid #b9c9da; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: #333; font-size: 11px; z-index: 101; flex-shrink: 0; }
-    .status-left { display: flex; align-items: center; gap: 15px; }
     .status-field { display: flex; align-items: center; gap: 6px; border-right: 1px solid #d9e3f0; padding-right: 15px; }
 
-    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(180, 200, 220, 0.4); backdrop-filter: blur(2px); z-index: 999999; display: flex; align-items: center; justify-content: center; }
-    .window-modal { background: #f0f0f0; border: 1px solid #666; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border-radius: 5px; width: 380px; max-width: 90%; overflow: hidden; display: flex; flex-direction: column; }
-    .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-    .modal-input { padding: 6px 10px; border: 1px solid #abc; border-radius: 3px; font-family: inherit; font-size: 12px; }
-    .modal-btn { padding: 8px; background: linear-gradient(to bottom, #fafafa, #eaeaea); border: 1px solid #707070; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px; color: #111; }
+    /* Login Modal Draggable */
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0, 0.5); backdrop-filter: blur(3px); z-index: 999999; display: flex; align-items: center; justify-content: center; }
+    .window-modal { background: #f0f0f0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 6px; width: 420px; max-width: 95%; display: flex; flex-direction: column; position: absolute; }
+    .modal-header { background: linear-gradient(to bottom, #1b5fa7, #2679c1); padding: 8px; color: white; font-weight: bold; cursor: grab; border-radius: 5px 5px 0 0; display:flex; justify-content: space-between;}
+    .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .modal-input { padding: 8px; border: 1px solid #abc; border-radius: 3px; font-family: inherit; font-size: 13px; width: 100%; }
+    .modal-btn { padding: 10px; background: #2679c1; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 13px; color: white; transition: 0.2s; }
+    .modal-btn:hover { background: #1b5fa7; }
+    
+    .file-upload-box { border: 2px dashed #b9c9da; padding: 10px; text-align: center; background: #fff; cursor: pointer; border-radius: 4px; font-size: 11px;}
+    .file-upload-box:hover { background: #eaf2fb; border-color: #358be9; }
 
-    @media (max-width: 768px) {
-      #main-content { flex-direction: column; }
-      #chat-sidebar { width: 100%; height: 200px; border-left: none; border-top: 1px solid #b9c9da; }
-      #workspace { padding: 5px; }
-      .title-text { max-width: 100px; }
-      #status-bar { height: auto; padding: 4px 10px; flex-wrap: wrap; }
-      .status-left { flex-wrap: wrap; gap: 5px; }
-      .status-field { border-right: none; padding-right: 5px; }
-      #network-status span { display: none; }
-    }
   </style>
 </head>
 <body>
@@ -138,13 +131,13 @@
         <div class="quick-btn" title="Descargar HD" onclick="downloadImage()">💾</div>
         <div class="quick-btn" title="Limpiar" onclick="clearCanvasPrompt()">🗑️</div>
       </div>
-      <div class="title-text" id="window-title">Paint Infinit (Ultimate Win7)</div>
+      <div class="title-text">Paint Infinit Ultimate 100X</div>
     </div>
     <div style="display: flex; align-items: center;">
-      <div id="network-status" title="Estado de Guardado en Servidor">
+      <div id="network-status" title="Estado de Servidor">
         <div id="status-indicator" class="status-dot"></div>
         <span id="network-text">Desconectado</span>
-        <span id="client-count-badge" style="font-weight:600; color:#1e395b;"></span>
+        <span id="client-count-badge" style="font-weight:600; color:#1e395b; margin-left:4px;">(0)</span>
       </div>
       <div class="window-controls">
         <button class="win-btn" onclick="document.documentElement.requestFullscreen()">🗖</button>
@@ -157,53 +150,71 @@
     <div id="ribbon-tabs">
       <div class="tab tab-file" id="tab-file-trigger">Archivo</div>
       <div id="file-menu">
-        <div class="file-item" onclick="downloadImage()">💾 Descargar a mi PC</div>
-        <div class="file-item" onclick="clearCanvasPrompt()">📄 Nuevo (Limpiar Sala)</div>
-        <div class="file-item" onclick="location.reload()">🚪 Cambiar de Sala</div>
+        <div class="file-item" onclick="downloadImage()">💾 Descargar Imagen</div>
+        <div class="file-item" onclick="downloadChat()">💬 Descargar Historial de Chat</div>
+        <div class="file-item" onclick="clearCanvasPrompt()">📄 Nuevo Lienzo (Limpiar)</div>
+        <div class="file-item" onclick="location.reload()">🚪 Cambiar de Sala / Salir</div>
       </div>
-      <div class="tab active" id="tab-home-trigger">Inicio</div>
-      <div class="tab" id="tab-view-trigger">Ver / Cursores</div>
+      <div class="tab active" id="tab-home-trigger">Inicio (Herramientas 100x)</div>
+      <div class="tab" id="tab-filters-trigger">Filtros Mágicos</div>
+      <div class="tab" id="tab-view-trigger">Ver / Interfaz</div>
     </div>
     
+    <!-- Pestaña INICIO -->
     <div id="panel-home" class="ribbon-panel active">
       <div class="ribbon-group">
         <div class="ribbon-controls">
           <div class="tool-grid">
             <button class="tool-grid-btn active" id="tool-pencil" title="Lápiz">✏️</button>
             <button class="tool-grid-btn" id="tool-bucket" title="Relleno">🪣</button>
-            <button class="tool-grid-btn" id="tool-text" title="Añadir Texto">A</button>
+            <button class="tool-grid-btn" id="tool-text" title="Texto">A</button>
             <button class="tool-grid-btn" id="tool-eraser" title="Borrador">🧽</button>
-            <button class="tool-grid-btn" id="tool-picker" title="Selector de color">🧪</button>
+            <button class="tool-grid-btn" id="tool-picker" title="Gotero">🧪</button>
             <button class="tool-grid-btn" id="tool-spray" title="Aerógrafo">💨</button>
+            <button class="tool-grid-btn" id="tool-rainbow" title="Pincel Arcoíris">🌈</button>
+            <button class="tool-grid-btn" id="tool-neon" title="Pincel Neón">💡</button>
+            <button class="tool-grid-btn" id="tool-ghost" title="Pincel Fantasma">👻</button>
           </div>
         </div>
-        <div class="ribbon-group-title">Herramientas</div>
+        <div class="ribbon-group-title">Herramientas Pro</div>
       </div>
 
       <div class="ribbon-group">
         <div class="ribbon-controls">
           <div class="tool-grid" style="grid-template-columns: repeat(4, 26px);">
-            <button class="tool-grid-btn" id="tool-line" title="Línea">📏</button>
+            <button class="tool-grid-btn" id="shape-line" title="Línea">📏</button>
             <button class="tool-grid-btn" id="shape-rect" title="Rectángulo">⬛</button>
             <button class="tool-grid-btn" id="shape-circle" title="Elipse">🔴</button>
             <button class="tool-grid-btn" id="shape-tri" title="Triángulo">🔺</button>
             <button class="tool-grid-btn" id="shape-star" title="Estrella">⭐</button>
             <button class="tool-grid-btn" id="shape-rhombus" title="Rombo">♦️</button>
+            <button class="tool-grid-btn" id="shape-arrow" title="Flecha">➡️</button>
+            <button class="tool-grid-btn" id="shape-hexa" title="Hexágono">⬡</button>
           </div>
         </div>
-        <div class="ribbon-group-title">Formas Nuevas</div>
+        <div class="ribbon-group-title">Formas (8)</div>
+      </div>
+
+      <div class="ribbon-group">
+        <div class="ribbon-controls">
+          <div class="stamp-grid" id="stamp-container">
+            <!-- Sellos inyectados por JS -->
+          </div>
+        </div>
+        <div class="ribbon-group-title">Sellos Instantáneos (Stamps)</div>
       </div>
 
       <div class="ribbon-group">
         <div class="ribbon-controls">
           <div id="size-selector">
-            <div class="size-option active" data-size="2"><div class="size-line" style="height: 1px;"></div></div>
-            <div class="size-option" data-size="6"><div class="size-line" style="height: 3px;"></div></div>
-            <div class="size-option" data-size="12"><div class="size-line" style="height: 6px;"></div></div>
-            <div class="size-option" data-size="24"><div class="size-line" style="height: 10px;"></div></div>
+            <div class="size-option" data-size="1"><div class="size-line" style="height: 1px;"></div></div>
+            <div class="size-option active" data-size="3"><div class="size-line" style="height: 2px;"></div></div>
+            <div class="size-option" data-size="8"><div class="size-line" style="height: 5px;"></div></div>
+            <div class="size-option" data-size="15"><div class="size-line" style="height: 8px;"></div></div>
+            <div class="size-option" data-size="30"><div class="size-line" style="height: 12px;"></div></div>
           </div>
         </div>
-        <div class="ribbon-group-title">Tamaño</div>
+        <div class="ribbon-group-title">Grosor</div>
       </div>
 
       <div class="ribbon-group" style="border-right: none;">
@@ -214,32 +225,39 @@
           </div>
           <div class="color-grid" id="palette"></div>
           <input type="color" id="native-color" style="opacity:0; width:1px; height:1px; position:absolute;">
-          <button onclick="document.getElementById('native-color').click()" style="padding:4px; font-size:10px; cursor:pointer;">Más colores</button>
+          <button onclick="document.getElementById('native-color').click()" style="padding:4px; font-size:10px; cursor:pointer;">+</button>
         </div>
-        <div class="ribbon-group-title">Colores</div>
+        <div class="ribbon-group-title">Paleta 24 Colores</div>
       </div>
     </div>
 
+    <!-- Pestaña FILTROS (NUEVO) -->
+    <div id="panel-filters" class="ribbon-panel">
+      <div class="ribbon-group" style="border:none; padding:10px;">
+        <div class="ribbon-controls" style="gap:15px;">
+          <button class="modal-btn" onclick="applyFilter('bw')">Blanco y Negro</button>
+          <button class="modal-btn" onclick="applyFilter('sepia')">Sepia Antiguo</button>
+          <button class="modal-btn" onclick="applyFilter('invert')">Invertir Colores</button>
+          <button class="modal-btn" style="background:#e81123;" onclick="applyFilter('noise')">Añadir Ruido</button>
+        </div>
+        <div class="ribbon-group-title">Aplicar a TODO el lienzo (Afecta a todos)</div>
+      </div>
+    </div>
+
+    <!-- Pestaña VER / INTERFAZ -->
     <div id="panel-view" class="ribbon-panel">
       <div class="ribbon-group">
-        <div class="ribbon-controls cursor-grid">
-          <div class="cursor-btn active" data-cursor="👆">👆</div>
-          <div class="cursor-btn" data-cursor="✏️">✏️</div>
-          <div class="cursor-btn" data-cursor="⚔️">⚔️</div>
-          <div class="cursor-btn" data-cursor="🪄">🪄</div>
-          <div class="cursor-btn" data-cursor="🖌️">🖌️</div>
-          <div class="cursor-btn" data-cursor="👽">👽</div>
-          <div class="cursor-btn" data-cursor="🔥">🔥</div>
-          <div class="cursor-btn" data-cursor="🍕">🍕</div>
+        <div class="ribbon-controls cursor-grid" id="cursor-container">
+          <!-- Cursores inyectados por JS -->
         </div>
-        <div class="ribbon-group-title">Elige tu Cursor Personalizado (Visible para otros)</div>
+        <div class="ribbon-group-title">Elige tu Cursor o usa tu Imagen Guardada</div>
       </div>
       <div class="ribbon-group" style="border-right:none;">
         <div class="ribbon-controls" style="flex-direction:column; align-items:flex-start; gap:6px; padding:0 10px;">
-          <label><input type="checkbox" checked id="chk-chat"> Mostrar Chat</label>
-          <label><input type="checkbox" id="chk-grid" onchange="toggleGrid(this)"> Cuadrícula Guía</label>
+          <label><input type="checkbox" checked id="chk-chat"> Panel de Chat</label>
+          <label><input type="checkbox" id="chk-grid" onchange="toggleGrid(this)"> Cuadrícula de Ayuda</label>
         </div>
-        <div class="ribbon-group-title">Interfaz</div>
+        <div class="ribbon-group-title">Paneles</div>
       </div>
     </div>
   </div>
@@ -247,177 +265,167 @@
   <div id="main-content">
     <div id="workspace">
       <div id="canvas-container">
-        <canvas id="paintCanvas" width="960" height="540"></canvas>
+        <canvas id="paintCanvas" width="1280" height="720"></canvas>
         <div id="grid-overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background-size: 20px 20px; background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px), linear-gradient(to bottom, #e0e0e0 1px, transparent 1px); pointer-events:none; z-index: 50;"></div>
         <div id="cursors-layer"></div>
       </div>
     </div>
 
     <div id="chat-sidebar">
-      <div id="chat-header"><span>Chat Aislado</span><span id="chat-room-name"></span></div>
-      <div id="chat-messages">
-        <div style="text-align:center; color:#aaa; font-style:italic;">Conectando...</div>
-      </div>
+      <div id="chat-header"><span>Chat en Vivo</span><span id="chat-room-name"></span></div>
+      <div id="chat-messages"><div class="msg-sys">Esperando conexión...</div></div>
       <div id="chat-input-container">
-        <input type="text" id="chat-input" placeholder="Mensaje...">
-        <div class="emoji-btn" onclick="addEmoji('👍')">👍</div>
-        <div class="emoji-btn" onclick="addEmoji('😂')">😂</div>
-        <div class="emoji-btn" onclick="addEmoji('🎨')">🎨</div>
-        <button id="btn-send-chat" style="padding:2px 6px; cursor:pointer;">➤</button>
+        <input type="text" id="chat-input" placeholder="Escribe aquí...">
+        <button id="btn-send-chat" style="padding:4px 8px; cursor:pointer; background:#2679c1; color:white; border:none; border-radius:2px;">Enviar</button>
       </div>
     </div>
   </div>
 
   <div id="status-bar">
-    <div class="status-left">
+    <div style="display:flex;">
       <div class="status-field">📍 <span id="coords-display">0, 0px</span></div>
-      <div class="status-field">💾 Server-Infinit: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
-      <div class="status-field">👤 Sala: <span id="room-display" style="font-weight:600;">-</span></div>
+      <div class="status-field">💾 Auto-Guardado: <span id="db-status" style="color:#107c41; font-weight:bold;">Espera...</span></div>
+      <div class="status-field">👤 Sala Actual: <span id="room-display" style="font-weight:600;">-</span></div>
     </div>
   </div>
 
+  <!-- Modal Login Draggable -->
   <div id="login-overlay">
-    <div class="window-modal">
-      <div id="title-bar" style="border-radius: 4px 4px 0 0;"><div class="title-text">Entrada con Aislamiento xd</div></div>
+    <div class="window-modal" id="login-modal">
+      <div class="modal-header" id="modal-drag-handle">
+        <span>Conexión de Alta Seguridad 100X</span>
+      </div>
       <div class="modal-body">
-        <label style="font-weight:600;">Tu Apodo:</label>
-        <input type="text" id="net-username" class="modal-input" value="ProArtist" maxlength="15">
-        <label style="font-weight:600;">Nombre de la Sala (Aisla la DB y el Chat):</label>
-        <input type="text" id="net-room" class="modal-input" value="sala_epica_1">
-        <button id="btn-connect" class="modal-btn" style="margin-top:8px;">Entrar a la Sala</button>
+        <label><b>Apodo (Se guarda localmente):</b></label>
+        <input type="text" id="net-username" class="modal-input" maxlength="15">
+        
+        <label><b>Sala Privada (Aísla todo):</b></label>
+        <input type="text" id="net-room" class="modal-input">
+
+        <label><b>Cursor Personalizado (Sube tu Imagen vía YYF):</b></label>
+        <div class="file-upload-box" onclick="document.getElementById('cursor-upload').click()">
+          <span id="upload-text">Haz clic para subir un archivo de imagen (Opcional)</span>
+          <input type="file" id="cursor-upload" style="display:none" accept="image/*">
+        </div>
+        
+        <div style="font-size:10px; color:#666;" id="saved-cursor-info"></div>
+
+        <button id="btn-connect" class="modal-btn" style="margin-top:10px;">CONECTAR Y ENTRAR AL LIENZO</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ── CONFIGURACIÓN SERVER-INFINIT ──
+    // ── CONFIGURACIÓN API ──
     const INFINIT_API_KEY = '68cbaf8483807fd1254db8e893d293b03430e0ca';
     const INFINIT_URL = 'https://ikelene.dev/storage/';
     const YYF_UPLOAD = 'https://yyf.mubilop.com/api/upload';
 
-    // ── ESTADO GLOBAL ──
+    // ── ESTADO GLOBAL Y LOCALSTORAGE ──
     const state = {
       tool: 'pencil',
       color1: '#000000', color2: '#ffffff', activeColorTarget: 'color1',
-      size: 2, isDrawing: false, startX: 0, startY: 0,
-      username: '', room: '',
+      size: 3, isDrawing: false, startX: 0, startY: 0,
+      username: localStorage.getItem('paint_user') || 'ProArtist',
+      room: localStorage.getItem('paint_room') || 'sala_magica',
+      myCursor: localStorage.getItem('paint_cursor') || '👆',
       isCanvasDirty: false, isSavingProcessActive: false,
-      myCursor: '👆' // Cursor personalizado
+      rainbowHue: 0, stampChar: '⭐'
     };
 
-    // Paleta expandida (24 colores)
-    const win7Colors = [
-      '#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8', '#3f48cc', '#a349a4', '#ff8c00', '#8b4513',
-      '#ffffff', '#c3c3c3', '#b97a57', '#ffaec9', '#ffc90e', '#efe4b0', '#b5e61d', '#99d9ea', '#7092be', '#c8bfe7', '#ff69b4', '#00fa9a'
-    ];
+    // Pre-llenar UI con LocalStorage
+    document.getElementById('net-username').value = state.username;
+    document.getElementById('net-room').value = state.room;
+    if(state.myCursor.startsWith('http')) {
+      document.getElementById('saved-cursor-info').innerText = "Tus datos tienen un cursor de imagen guardado activo.";
+    }
 
     const canvas = document.getElementById('paintCanvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     const cursorsLayer = document.getElementById('cursors-layer');
 
-    // Inicializar Paleta
+    // ── UI Y ARRAYS MASIVOS (100 Cosas) ──
+    const win7Colors = [
+      '#000000','#7f7f7f','#880015','#ed1c24','#ff7f27','#fff200','#22b14c','#00a2e8','#3f48cc','#a349a4','#ff8c00','#8b4513',
+      '#ffffff','#c3c3c3','#b97a57','#ffaec9','#ffc90e','#efe4b0','#b5e61d','#99d9ea','#7092be','#c8bfe7','#ff69b4','#00fa9a'
+    ];
     win7Colors.forEach(color => {
-      const cell = document.createElement('div');
-      cell.className = 'color-cell'; cell.style.background = color;
-      cell.onclick = () => {
-        if (state.activeColorTarget === 'color1') { state.color1 = color; document.getElementById('color1-box').style.background = color; } 
-        else { state.color2 = color; document.getElementById('color2-box').style.background = color; }
-      };
+      const cell = document.createElement('div'); cell.className = 'color-cell'; cell.style.background = color;
+      cell.onclick = () => { if (state.activeColorTarget === 'color1') { state.color1 = color; document.getElementById('color1-box').style.background = color; } else { state.color2 = color; document.getElementById('color2-box').style.background = color; } };
       document.getElementById('palette').appendChild(cell);
     });
 
-    // Custom Color Picker Integración
-    document.getElementById('native-color').addEventListener('input', (e) => {
-      const color = e.target.value;
-      if (state.activeColorTarget === 'color1') { state.color1 = color; document.getElementById('color1-box').style.background = color; } 
-      else { state.color2 = color; document.getElementById('color2-box').style.background = color; }
+    // Inyectar 30+ Sellos
+    const stamps = ['⭐','❤️','🔥','💥','💀','👽','🍕','🍔','🍉','🎈','🎉','👑','💎','⚽','🚗','🚀','🐱','🐶','🐸','🦋','🌸','🌵','☀️','🌙','⚡','💧','❄️','🎸','🎮','🎯','🎨','🎭','🧩','🧸'];
+    stamps.forEach(s => {
+      const btn = document.createElement('div'); btn.className = 'stamp-btn'; btn.innerText = s;
+      btn.onclick = () => { setTool('stamp'); state.stampChar = s; };
+      document.getElementById('stamp-container').appendChild(btn);
     });
 
-    document.getElementById('color1-box').onclick = () => { document.getElementById('color2-box').classList.remove('active'); document.getElementById('color1-box').classList.add('active'); state.activeColorTarget = 'color1'; };
-    document.getElementById('color2-box').onclick = () => { document.getElementById('color1-box').classList.remove('active'); document.getElementById('color2-box').classList.add('active'); state.activeColorTarget = 'color2'; };
+    // Inyectar Cursores Clásicos
+    const cursors = ['👆','✏️','🖌️','⚔️','🪄','🎯','🚀','👾','👻','🍕'];
+    cursors.forEach(c => {
+      const btn = document.createElement('div'); btn.className = 'stamp-btn'; btn.innerText = c;
+      btn.onclick = () => { state.myCursor = c; localStorage.setItem('paint_cursor', c); };
+      document.getElementById('cursor-container').appendChild(btn);
+    });
 
-    // Pestañas y Menú Archivo
-    document.getElementById('tab-file-trigger').onclick = () => {
-      const menu = document.getElementById('file-menu');
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    // Pestañas
+    document.getElementById('tab-file-trigger').onclick = () => { const m = document.getElementById('file-menu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; };
+    document.addEventListener('click', (e) => { if (!e.target.closest('.tab-file') && !e.target.closest('#file-menu')) document.getElementById('file-menu').style.display = 'none'; });
+    
+    function switchTab(triggerId, panelId) {
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.ribbon-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById(triggerId).classList.add('active'); document.getElementById(panelId).classList.add('active');
+    }
+    document.getElementById('tab-home-trigger').onclick = () => switchTab('tab-home-trigger', 'panel-home');
+    document.getElementById('tab-filters-trigger').onclick = () => switchTab('tab-filters-trigger', 'panel-filters');
+    document.getElementById('tab-view-trigger').onclick = () => switchTab('tab-view-trigger', 'panel-view');
+
+    // Herramientas binding
+    function setTool(t, el) { 
+      state.tool = t; document.querySelectorAll('.tool-grid-btn').forEach(b=>b.classList.remove('active')); 
+      if(el) el.classList.add('active'); 
+    }
+    const toolsMap = {
+      'tool-pencil': 'pencil', 'tool-eraser': 'eraser', 'tool-bucket': 'bucket', 'tool-picker': 'picker', 'tool-text': 'text', 'tool-spray': 'spray',
+      'tool-rainbow': 'rainbow', 'tool-neon': 'neon', 'tool-ghost': 'ghost',
+      'shape-line': 'line', 'shape-rect': 'rect', 'shape-circle': 'circle', 'shape-tri': 'triangle', 'shape-star': 'star', 'shape-rhombus': 'rhombus', 'shape-arrow': 'arrow', 'shape-hexa': 'hexa'
     };
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.tab-file') && !e.target.closest('#file-menu')) {
-        document.getElementById('file-menu').style.display = 'none';
-      }
-    });
-    
-    document.getElementById('tab-home-trigger').onclick = (e) => { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.ribbon-panel').forEach(p=>p.classList.remove('active')); e.target.classList.add('active'); document.getElementById('panel-home').classList.add('active'); };
-    document.getElementById('tab-view-trigger').onclick = (e) => { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.ribbon-panel').forEach(p=>p.classList.remove('active')); e.target.classList.add('active'); document.getElementById('panel-view').classList.add('active'); };
-    document.getElementById('chk-chat').onchange = (e) => { document.getElementById('chat-sidebar').style.display = e.target.checked ? 'flex' : 'none'; };
-
-    function toggleGrid(chk) { document.getElementById('grid-overlay').style.display = chk.checked ? 'block' : 'none'; }
-
-    // Herramientas
-    function setTool(t, el) { state.tool = t; document.querySelectorAll('.tool-grid-btn').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); }
-    document.getElementById('tool-pencil').onclick = (e) => setTool('pencil', e.target);
-    document.getElementById('tool-eraser').onclick = (e) => setTool('eraser', e.target);
-    document.getElementById('tool-bucket').onclick = (e) => setTool('bucket', e.target);
-    document.getElementById('tool-picker').onclick = (e) => setTool('picker', e.target);
-    document.getElementById('tool-text').onclick = (e) => setTool('text', e.target);
-    document.getElementById('tool-spray').onclick = (e) => setTool('spray', e.target);
-    document.getElementById('tool-line').onclick = (e) => setTool('line', e.target);
-    document.getElementById('shape-rect').onclick = (e) => setTool('rect', e.currentTarget);
-    document.getElementById('shape-circle').onclick = (e) => setTool('circle', e.currentTarget);
-    document.getElementById('shape-tri').onclick = (e) => setTool('triangle', e.currentTarget);
-    document.getElementById('shape-star').onclick = (e) => setTool('star', e.currentTarget);
-    document.getElementById('shape-rhombus').onclick = (e) => setTool('rhombus', e.currentTarget);
-
-    function clearCanvasPrompt() { if(confirm("¿Limpiar todo el lienzo para todos los amigos?")) { executeClear(); network.sendDrawAction({ type: 'clear' }); markCanvasDirty(); document.getElementById('file-menu').style.display = 'none'; } }
-    
-    // Selector Cursore Personalizado
-    document.querySelectorAll('.cursor-btn').forEach(btn => {
-      btn.onclick = (e) => {
-        document.querySelectorAll('.cursor-btn').forEach(b=>b.classList.remove('active'));
-        e.currentTarget.classList.add('active');
-        state.myCursor = e.currentTarget.getAttribute('data-cursor');
-      };
-    });
+    for(let id in toolsMap) { document.getElementById(id).onclick = (e) => setTool(toolsMap[id], e.currentTarget); }
 
     document.querySelectorAll('#size-selector .size-option').forEach(opt => {
       opt.onclick = (e) => { document.querySelectorAll('#size-selector .size-option').forEach(o=>o.classList.remove('active')); e.currentTarget.classList.add('active'); state.size = parseInt(e.currentTarget.getAttribute('data-size')); };
     });
 
-    function downloadImage() {
-      const link = document.createElement('a');
-      link.download = `Paint_Collab_${state.room}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      document.getElementById('file-menu').style.display = 'none';
-    }
+    document.getElementById('chk-chat').onchange = (e) => { document.getElementById('chat-sidebar').style.display = e.target.checked ? 'flex' : 'none'; };
+    function toggleGrid(chk) { document.getElementById('grid-overlay').style.display = chk.checked ? 'block' : 'none'; }
 
+    // ── MOTOR DE DIBUJO AVANZADO ──
     let snapshot = null;
-    function getCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      return { x: Math.round((e.clientX - rect.left) * (canvas.width / rect.width)), y: Math.round((e.clientY - rect.top) * (canvas.height / rect.height)) };
-    }
-    function getTouchCoords(e) {
-      const rect = canvas.getBoundingClientRect(); const touch = e.touches[0];
-      return { x: Math.round((touch.clientX - rect.left) * (canvas.width / rect.width)), y: Math.round((touch.clientY - rect.top) * (canvas.height / rect.height)) };
-    }
+    function getCoords(e) { const r = canvas.getBoundingClientRect(); return { x: Math.round((e.clientX - r.left) * (canvas.width / r.width)), y: Math.round((e.clientY - r.top) * (canvas.height / r.height)) }; }
 
-    function markCanvasDirty() { state.isCanvasDirty = true; }
-
-    // ── MOTOR GRÁFICO (NUEVAS FORMAS Y TEXTO) ──
-    function drawLineLocal(x0, y0, x1, y1, color, size, isEraser = false, isSpray = false) {
-      if(isEraser) { ctx.beginPath(); ctx.lineWidth=size; ctx.lineCap='round'; ctx.strokeStyle=state.color2; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); return; }
-      if(isSpray) {
-        ctx.fillStyle = color;
-        for(let i=0; i<size*3; i++) {
-          const r = Math.random() * size * 1.5; const ang = Math.random() * Math.PI * 2;
-          ctx.fillRect(x1 + r * Math.cos(ang), y1 + r * Math.sin(ang), 1, 1);
-        }
-        return;
+    function drawLineLocal(x0, y0, x1, y1, color, size, toolType = 'pencil') {
+      ctx.beginPath(); ctx.lineCap='round'; ctx.lineJoin='round';
+      
+      if(toolType === 'eraser') { ctx.lineWidth=size; ctx.strokeStyle=state.color2; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); return; }
+      if(toolType === 'spray') {
+        ctx.fillStyle = color; for(let i=0; i<size*4; i++) { const r = Math.random() * size * 2; const ang = Math.random() * Math.PI * 2; ctx.fillRect(x1 + r * Math.cos(ang), y1 + r * Math.sin(ang), 1, 1); } return;
       }
-      ctx.beginPath(); ctx.lineWidth=size; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle=color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+      if(toolType === 'ghost') { ctx.globalAlpha = 0.1; ctx.lineWidth=size*2; ctx.strokeStyle=color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.globalAlpha = 1.0; return; }
+      if(toolType === 'neon') {
+        ctx.lineWidth=size; ctx.strokeStyle='#fff'; ctx.shadowBlur = size*3; ctx.shadowColor = color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+        ctx.shadowBlur = 0; return;
+      }
+      if(toolType === 'rainbow') {
+        state.rainbowHue = (state.rainbowHue + 5) % 360; color = `hsl(${state.rainbowHue}, 100%, 50%)`;
+      }
+      
+      ctx.lineWidth=size; ctx.strokeStyle=color; ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
     }
 
-    function drawShapeLocal(type, x0, y0, x1, y1, color, size) {
+    function drawShapeLocal(type, x0, y0, x1, y1, color, size, extra) {
       ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = size; ctx.lineJoin = 'round';
       const w = x1 - x0; const h = y1 - y0;
       if (type === 'line') { ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); } 
@@ -425,25 +433,35 @@
       else if (type === 'circle') { let r = Math.sqrt(w*w + h*h); ctx.arc(x0, y0, r, 0, 2*Math.PI); }
       else if (type === 'triangle') { ctx.moveTo(x0 + w/2, y0); ctx.lineTo(x1, y1); ctx.lineTo(x0, y1); ctx.closePath(); }
       else if (type === 'rhombus') { ctx.moveTo(x0 + w/2, y0); ctx.lineTo(x1, y0 + h/2); ctx.lineTo(x0 + w/2, y1); ctx.lineTo(x0, y0 + h/2); ctx.closePath(); }
-      else if (type === 'star') {
-        const r = Math.sqrt(w*w+h*h); let rot=Math.PI/2*3; let x=x0, y=y0, step=Math.PI/5;
-        for(let i=0;i<5;i++){ ctx.lineTo(x+Math.cos(rot)*r, y+Math.sin(rot)*r); rot+=step; ctx.lineTo(x+Math.cos(rot)*(r/2.5), y+Math.sin(rot)*(r/2.5)); rot+=step; } ctx.closePath();
-      }
+      else if (type === 'arrow') { ctx.moveTo(x0, y0+h/3); ctx.lineTo(x0+w/2, y0+h/3); ctx.lineTo(x0+w/2, y0); ctx.lineTo(x1, y0+h/2); ctx.lineTo(x0+w/2, y1); ctx.lineTo(x0+w/2, y0+(h/3)*2); ctx.lineTo(x0, y0+(h/3)*2); ctx.closePath(); }
+      else if (type === 'hexa') { const r = Math.sqrt(w*w+h*h)/2; const cx=x0+w/2, cy=y0+h/2; for(let i=0;i<6;i++){ const a=Math.PI/3*i; ctx[i===0?'moveTo':'lineTo'](cx+r*Math.cos(a), cy+r*Math.sin(a)); } ctx.closePath(); }
+      else if (type === 'star') { const r = Math.sqrt(w*w+h*h); let rot=Math.PI/2*3; let x=x0, y=y0, step=Math.PI/5; for(let i=0;i<5;i++){ ctx.lineTo(x+Math.cos(rot)*r, y+Math.sin(rot)*r); rot+=step; ctx.lineTo(x+Math.cos(rot)*(r/2.5), y+Math.sin(rot)*(r/2.5)); rot+=step; } ctx.closePath(); }
+      else if (type === 'stamp') { ctx.font = `${size*10}px Arial`; ctx.fillText(extra, x1, y1); return; } // Stamp especial
       ctx.stroke();
     }
 
-    function drawTextLocal(txt, x, y, color, size) {
-      ctx.font = `bold ${size*4 + 10}px 'Segoe UI', Arial`; ctx.fillStyle = color; ctx.fillText(txt, x, y);
+    // Filtros de Imagen Mágicos
+    function applyFilter(type) {
+      const imgData = ctx.getImageData(0,0,canvas.width,canvas.height); const d = imgData.data;
+      for(let i=0; i<d.length; i+=4) {
+        if(type==='bw' || type==='sepia') {
+          const avg = (d[i]+d[i+1]+d[i+2])/3;
+          if(type==='bw') { d[i]=avg; d[i+1]=avg; d[i+2]=avg; }
+          else { d[i]=avg+100>255?255:avg+100; d[i+1]=avg+50>255?255:avg+50; d[i+2]=avg; }
+        }
+        else if(type==='invert') { d[i]=255-d[i]; d[i+1]=255-d[i+1]; d[i+2]=255-d[i+2]; }
+        else if(type==='noise') { const n=(Math.random()-0.5)*100; d[i]+=n; d[i+1]+=n; d[i+2]+=n; }
+      }
+      ctx.putImageData(imgData, 0, 0); markCanvasDirty();
+      network.sendDrawAction({ type: 'filter', filter: type });
     }
-
-    function executeClear() { ctx.fillStyle = state.color2; ctx.fillRect(0, 0, canvas.width, canvas.height); }
 
     function floodFill(startX, startY, fillColor) {
       const targetColor = ctx.getImageData(startX, startY, 1, 1).data;
+      const hexToRgb = (hex) => { var c = hex.substring(1).match(/.{1,2}/g); return [parseInt(c[0],16), parseInt(c[1],16), parseInt(c[2],16)]; };
       const fillRGB = hexToRgb(fillColor);
       if (targetColor[0]===fillRGB[0] && targetColor[1]===fillRGB[1] && targetColor[2]===fillRGB[2]) return;
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data; const queue = [[startX, startY]];
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); const data = imageData.data; const queue = [[startX, startY]];
       while (queue.length > 0) {
         const [x, y] = queue.pop(); const pos = (y * canvas.width + x) * 4;
         if (data[pos]===targetColor[0] && data[pos+1]===targetColor[1] && data[pos+2]===targetColor[2]) {
@@ -454,27 +472,27 @@
       }
       ctx.putImageData(imageData, 0, 0);
     }
-    function hexToRgb(hex) { var c = hex.substring(1).match(/.{1,2}/g); return [parseInt(c[0],16), parseInt(c[1],16), parseInt(c[2],16)]; }
 
-    // Interacciones UI
+    // Interacciones Ratón
     function handleDrawStart(coords, isRightClick) {
       if (!network.connected) return;
       let activeColor = isRightClick ? state.color2 : state.color1;
       state.isDrawing = true; state.startX = coords.x; state.startY = coords.y;
       snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
       
-      if (state.tool === 'bucket') {
-        floodFill(state.startX, state.startY, activeColor); network.sendDrawAction({ type: 'bucket', x: state.startX, y: state.startY, color: activeColor }); state.isDrawing = false; markCanvasDirty();
-      } else if (state.tool === 'picker') {
-        const d = ctx.getImageData(state.startX, state.startY, 1, 1).data;
-        const hex = "#" + ((1<<24)+(d[0]<<16)+(d[1]<<8)+d[2]).toString(16).slice(1);
-        if(state.activeColorTarget === 'color1') { state.color1 = hex; document.getElementById('color1-box').style.background = hex; } 
-        else { state.color2 = hex; document.getElementById('color2-box').style.background = hex; }
+      if (state.tool === 'bucket') { floodFill(state.startX, state.startY, activeColor); network.sendDrawAction({ type: 'bucket', x: state.startX, y: state.startY, color: activeColor }); state.isDrawing = false; markCanvasDirty(); } 
+      else if (state.tool === 'picker') {
+        const d = ctx.getImageData(state.startX, state.startY, 1, 1).data; const hex = "#" + ((1<<24)+(d[0]<<16)+(d[1]<<8)+d[2]).toString(16).slice(1);
+        if(state.activeColorTarget === 'color1') { state.color1 = hex; document.getElementById('color1-box').style.background = hex; } else { state.color2 = hex; document.getElementById('color2-box').style.background = hex; }
         state.isDrawing = false;
-      } else if (state.tool === 'text') {
-        state.isDrawing = false;
-        const t = prompt("Escribe tu texto:");
-        if(t) { drawTextLocal(t, coords.x, coords.y, activeColor, state.size); network.sendDrawAction({ type: 'text', txt: t, x: coords.x, y: coords.y, color: activeColor, size: state.size }); markCanvasDirty(); }
+      } 
+      else if (state.tool === 'text') {
+        state.isDrawing = false; const t = prompt("Texto:");
+        if(t) { ctx.font = `bold ${state.size*5 + 10}px Arial`; ctx.fillStyle = activeColor; ctx.fillText(t, coords.x, coords.y); network.sendDrawAction({ type: 'text', txt: t, x: coords.x, y: coords.y, color: activeColor, size: state.size }); markCanvasDirty(); }
+      }
+      else if (state.tool === 'stamp') {
+        drawShapeLocal('stamp', 0, 0, coords.x, coords.y, activeColor, state.size, state.stampChar);
+        network.sendDrawAction({ type: 'shape', shapeType: 'stamp', x0:0, y0:0, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, extra: state.stampChar }); markCanvasDirty();
       }
     }
 
@@ -483,12 +501,13 @@
       if (network.connected) network.sendCursor(coords.x, coords.y, state.myCursor);
       if (!state.isDrawing) return;
       let activeColor = isRightClick ? state.color2 : state.color1;
+      if(state.tool === 'rainbow') activeColor = `hsl(${state.rainbowHue}, 100%, 50%)`;
       
-      if (['pencil', 'eraser', 'spray'].includes(state.tool)) {
-        drawLineLocal(state.startX, state.startY, coords.x, coords.y, activeColor, state.size, state.tool==='eraser', state.tool==='spray');
-        network.sendDrawAction({ type: 'line', x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, eraser: state.tool==='eraser', spray: state.tool==='spray' });
+      if (['pencil', 'eraser', 'spray', 'ghost', 'neon', 'rainbow'].includes(state.tool)) {
+        drawLineLocal(state.startX, state.startY, coords.x, coords.y, activeColor, state.size, state.tool);
+        network.sendDrawAction({ type: 'line', x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size, toolType: state.tool });
         state.startX = coords.x; state.startY = coords.y; markCanvasDirty();
-      } else if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus'].includes(state.tool)) {
+      } else if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus', 'arrow', 'hexa'].includes(state.tool)) {
         ctx.putImageData(snapshot, 0, 0); drawShapeLocal(state.tool, state.startX, state.startY, coords.x, coords.y, activeColor, state.size);
       }
     }
@@ -496,37 +515,30 @@
     function handleDrawEnd(coords, isRightClick) {
       if (!state.isDrawing) return; state.isDrawing = false;
       let activeColor = isRightClick ? state.color2 : state.color1;
-      if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus'].includes(state.tool)) {
-        network.sendDrawAction({ type: 'shape', shapeType: state.tool, x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size });
-        markCanvasDirty();
+      if (['line', 'rect', 'circle', 'triangle', 'star', 'rhombus', 'arrow', 'hexa'].includes(state.tool)) {
+        network.sendDrawAction({ type: 'shape', shapeType: state.tool, x0: state.startX, y0: state.startY, x1: coords.x, y1: coords.y, color: activeColor, size: state.size }); markCanvasDirty();
       }
     }
 
-    // Bindings Ratón y Táctil
-    canvas.onmousedown = (e) => handleDrawStart(getCoords(e), e.button === 2);
-    canvas.onmousemove = (e) => handleDrawMove(getCoords(e), e.buttons === 2);
-    canvas.onmouseup = (e) => handleDrawEnd(getCoords(e), e.button === 2);
-    canvas.onmouseleave = () => state.isDrawing = false;
-    canvas.oncontextmenu = (e) => e.preventDefault();
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleDrawStart(getTouchCoords(e), false); }, { passive: false });
-    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(getTouchCoords(e), false); }, { passive: false });
-    canvas.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      if(e.changedTouches.length>0){ const c = {x: Math.round((e.changedTouches[0].clientX - canvas.getBoundingClientRect().left)*(canvas.width/canvas.getBoundingClientRect().width)), y: Math.round((e.changedTouches[0].clientY - canvas.getBoundingClientRect().top)*(canvas.height/canvas.getBoundingClientRect().height))}; handleDrawEnd(c, false); }
-      else state.isDrawing = false;
-    }, { passive: false });
+    canvas.onmousedown = (e) => handleDrawStart(getCoords(e), e.button === 2); canvas.onmousemove = (e) => handleDrawMove(getCoords(e), e.buttons === 2); canvas.onmouseup = (e) => handleDrawEnd(getCoords(e), e.button === 2);
+    canvas.onmouseleave = () => state.isDrawing = false; canvas.oncontextmenu = (e) => e.preventDefault();
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleDrawStart(getCoords(e.touches[0]), false); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(getCoords(e.touches[0]), false); }, { passive: false });
+    canvas.addEventListener('touchend', (e) => { e.preventDefault(); if(e.changedTouches.length>0) handleDrawEnd(getCoords(e.changedTouches[0]), false); else state.isDrawing = false; }, { passive: false });
 
-    // ── RED CLOUD32 AISLADA ──
+    // ── RED CLOUD32 (AISLADA + RECONEXIÓN AUTOMÁTICA) ──
     class Cloud32NetworkClient {
-      constructor() { this.ws = null; this.connected = false; this.remoteCursors = {}; }
-      connect(user, room) {
+      constructor() { this.ws = null; this.connected = false; this.remoteCursors = {}; this.reconnectTimer = null; }
+      connect(user, room, isReconnect = false) {
         state.username = user; state.room = room;
         document.getElementById('room-display').innerText = room; document.getElementById('chat-room-name').innerText = `[${room}]`;
         this.ws = new WebSocket('wss://cloud-link-server--jere32game.replit.app');
         this.ws.onopen = () => {
-          this.connected = true; document.getElementById('status-indicator').className = 'status-dot online';
+          this.connected = true; clearTimeout(this.reconnectTimer);
+          document.getElementById('status-indicator').className = 'status-dot online';
           document.getElementById('network-text').innerText = `En línea`;
           this._send({ cmd: 'setid', val: state.username }); this._send({ cmd: 'link', val: [state.room] });
+          if(isReconnect) appendSysMsg("Conexión restaurada."); else this.sendSysMsg(`${state.username} ha entrado a la sala.`);
         };
         this.ws.onmessage = (evt) => {
           try {
@@ -535,67 +547,100 @@
             if (msg.cmd === 'gmsg') {
               const sender = msg.origin?.username || 'Invitado'; if (sender === state.username) return;
               const p = JSON.parse(msg.val);
-              
-              if (p.room !== state.room) return; // Aislamiento Total
+              if (p.room !== state.room) return; // AISLAMIENTO TOTAL
               
               if (p.n7_action === 'cursor') { this.syncCursor(sender, p.x, p.y, p.c); }
               else if (p.n7_action === 'draw') {
                 const d = p.data;
-                if (d.type === 'line') drawLineLocal(d.x0, d.y0, d.x1, d.y1, d.color, d.size, d.eraser, d.spray);
-                else if (d.type === 'shape') drawShapeLocal(d.shapeType, d.x0, d.y0, d.x1, d.y1, d.color, d.size);
+                if (d.type === 'line') drawLineLocal(d.x0, d.y0, d.x1, d.y1, d.color, d.size, d.toolType);
+                else if (d.type === 'shape') drawShapeLocal(d.shapeType, d.x0, d.y0, d.x1, d.y1, d.color, d.size, d.extra);
                 else if (d.type === 'bucket') floodFill(d.x, d.y, d.color);
-                else if (d.type === 'text') drawTextLocal(d.txt, d.x, d.y, d.color, d.size);
-                else if (d.type === 'clear') executeClear();
+                else if (d.type === 'text') { ctx.font = `bold ${d.size*5 + 10}px Arial`; ctx.fillStyle = d.color; ctx.fillText(d.txt, d.x, d.y); }
+                else if (d.type === 'clear') { ctx.fillStyle = state.color2; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+                else if (d.type === 'filter') applyFilter(d.filter);
               }
               else if (p.n7_action === 'chat') { appendChatMsg(sender, p.text); }
+              else if (p.n7_action === 'sys') { appendSysMsg(p.text); }
             }
           } catch(e) {}
         };
-        this.ws.onclose = () => { this.connected = false; document.getElementById('status-indicator').className = 'status-dot'; };
+        this.ws.onclose = () => { 
+          this.connected = false; document.getElementById('status-indicator').className = 'status-dot reconnecting';
+          document.getElementById('network-text').innerText = 'Reconectando...'; appendSysMsg("Desconectado. Intentando reconectar...");
+          this.reconnectTimer = setTimeout(() => { if(state.username && state.room) this.connect(state.username, state.room, true); }, 3000);
+        };
       }
       _send(obj) { if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(obj)); }
       sendDrawAction(d) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'draw', room: state.room, data: d }) }); }
       sendCursor(x, y, c) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'cursor', room: state.room, x, y, c }) }); }
       sendChat(txt) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'chat', room: state.room, text: txt }) }); }
+      sendSysMsg(txt) { this._send({ cmd: 'gmsg', val: JSON.stringify({ n7_action: 'sys', room: state.room, text: txt }) }); }
 
-      syncCursor(user, x, y, cursorIcon) {
+      syncCursor(user, x, y, cursorData) {
         let node = this.remoteCursors[user];
         if (!node) {
           node = document.createElement('div'); node.className = 'remote-cursor';
-          node.innerHTML = `<div class="remote-icon">${cursorIcon||'👆'}</div><div class="remote-label">${user}</div>`;
+          node.innerHTML = `<div class="remote-icon"></div><div class="remote-label">${user}</div>`;
           cursorsLayer.appendChild(node); this.remoteCursors[user] = node;
-        } else {
-          // Actualiza el icono si el usuario lo cambió
-          node.querySelector('.remote-icon').innerText = cursorIcon || '👆';
         }
+        const iconDiv = node.querySelector('.remote-icon');
+        if(cursorData && cursorData.startsWith('http')) iconDiv.innerHTML = `<img src="${cursorData}">`; else iconDiv.innerText = cursorData || '👆';
         node.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-        clearTimeout(node.killTimeout); node.style.opacity = "1";
-        node.killTimeout = setTimeout(() => { node.style.opacity = "0"; }, 4000);
+        clearTimeout(node.killTimeout); node.style.opacity = "1"; node.killTimeout = setTimeout(() => { node.style.opacity = "0"; }, 4000);
       }
     }
     const network = new Cloud32NetworkClient();
 
-    // ── CHAT UI ──
-    const chatContainer = document.getElementById('chat-messages'); const chatInput = document.getElementById('chat-input');
+    // ── CHAT ──
+    const chatContainer = document.getElementById('chat-messages');
     function appendChatMsg(user, text, isSelf=false) {
+      const d = new Date(); const time = `${d.getHours()}:${d.getMinutes() < 10 ? '0' : ''}${d.getMinutes()}`;
       const b = document.createElement('div'); b.className = `msg-bubble ${isSelf ? 'self' : ''}`;
-      b.innerHTML = `<div class="msg-user">${user}</div><span>${text}</span>`;
+      b.innerHTML = `<div class="msg-user">${user} <span style="font-weight:normal; color:#888;">${time}</span></div><span>${text}</span>`;
       chatContainer.appendChild(b); chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    function addEmoji(em) { chatInput.value += em; chatInput.focus(); }
-    function handleSendChat() { const txt = chatInput.value.trim(); if(txt) { network.sendChat(txt); appendChatMsg(state.username, txt, true); chatInput.value = ''; } }
+    function appendSysMsg(text) {
+      const b = document.createElement('div'); b.className = 'msg-sys'; b.innerText = text;
+      chatContainer.appendChild(b); chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    function handleSendChat() { const txt = document.getElementById('chat-input').value.trim(); if(txt) { network.sendChat(txt); appendChatMsg(state.username, txt, true); document.getElementById('chat-input').value = ''; } }
     document.getElementById('btn-send-chat').onclick = handleSendChat;
-    chatInput.onkeydown = (e) => { if(e.key === 'Enter') handleSendChat(); };
+    document.getElementById('chat-input').onkeydown = (e) => { if(e.key === 'Enter') handleSendChat(); };
 
-    // ── SERVER-INFINIT ──
-    async function loadRoomImage(roomName) {
-      document.getElementById('btn-connect').innerText = "Cargando DB...";
+    // ── GUARDADO, DESCARGAS Y YYF API ──
+    function downloadImage() { const a = document.createElement('a'); a.download = `Paint_100x_${state.room}.png`; a.href = canvas.toDataURL('image/png'); a.click(); document.getElementById('file-menu').style.display='none';}
+    function downloadChat() { 
+      let text = "--- HISTORIAL DE CHAT ---\n";
+      document.querySelectorAll('.msg-bubble, .msg-sys').forEach(el => text += el.innerText + "\n");
+      const a = document.createElement('a'); a.download = `Chat_${state.room}.txt`; a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text); a.click(); document.getElementById('file-menu').style.display='none';
+    }
+    function clearCanvasPrompt() { if(confirm("¿Borrar todo el lienzo para todos?")) { ctx.fillStyle=state.color2; ctx.fillRect(0,0,canvas.width,canvas.height); network.sendDrawAction({ type: 'clear' }); markCanvasDirty(); document.getElementById('file-menu').style.display='none'; } }
+    function markCanvasDirty() { state.isCanvasDirty = true; }
+
+    // UPLOAD CURSOR A YYF
+    document.getElementById('cursor-upload').onchange = async (e) => {
+      const file = e.target.files[0]; if(!file) return;
+      document.getElementById('upload-text').innerText = "Subiendo imagen a YYF...";
       try {
-        const res = await fetch(INFINIT_URL + 'get.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${roomName}` }) });
+        const fd = new FormData(); fd.append('file', file);
+        const res = await fetch(YYF_UPLOAD, { method: 'POST', body: fd });
+        const data = await res.json();
+        const url = 'https://yyf.mubilop.com' + data.fileUrl;
+        state.myCursor = url;
+        localStorage.setItem('paint_cursor', url);
+        document.getElementById('upload-text').innerText = "¡Imagen lista! (" + file.name + ")";
+        document.getElementById('saved-cursor-info').innerText = "Cursor de imagen guardado correctamente.";
+      } catch(err) { document.getElementById('upload-text').innerText = "Error al subir. Intenta de nuevo."; }
+    };
+
+    // SERVER-INFINIT DB
+    async function loadRoomImage(roomName) {
+      document.getElementById('btn-connect').innerText = "Sincronizando DB...";
+      try {
+        const res = await fetch(INFINIT_URL + 'get.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_100X_${roomName}` }) });
         const d = await res.json();
         if (d.success && d.data && d.data.value && d.data.value.startsWith('http')) {
-          const img = new Image(); img.crossOrigin = 'Anonymous';
-          img.onload = () => { ctx.drawImage(img, 0, 0); }; img.src = d.data.value;
+          const img = new Image(); img.crossOrigin = 'Anonymous'; img.onload = () => { ctx.drawImage(img, 0, 0); }; img.src = d.data.value;
         }
       } catch (e) {}
       document.getElementById('login-overlay').style.display = 'none';
@@ -607,24 +652,37 @@
       document.getElementById('status-indicator').className = 'status-dot saving'; document.getElementById('db-status').innerText = 'Guardando DB...';
       try {
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const fd = new FormData(); fd.append('file', blob, 'master_canvas.png');
-        const yyfRes = await fetch(YYF_UPLOAD, { method: 'POST', body: fd });
-        const yyfData = await yyfRes.json();
-        await fetch(INFINIT_URL + 'store.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_ROOM_${state.room}`, value: 'https://yyf.mubilop.com' + yyfData.fileUrl, mimeType: 'text/plain' }) });
+        const fd = new FormData(); fd.append('file', blob, 'canvas.png');
+        const yyfRes = await fetch(YYF_UPLOAD, { method: 'POST', body: fd }); const yyfData = await yyfRes.json();
+        await fetch(INFINIT_URL + 'store.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: INFINIT_API_KEY, key: `PAINT_100X_${state.room}`, value: 'https://yyf.mubilop.com' + yyfData.fileUrl, mimeType: 'text/plain' }) });
         document.getElementById('db-status').innerText = 'Guardado OK';
-      } catch(e) { state.isCanvasDirty = true; document.getElementById('db-status').innerText = 'Error al guardar'; }
-      state.isSavingProcessActive = false;
-      setTimeout(() => { if(!state.isSavingProcessActive) document.getElementById('status-indicator').className = 'status-dot online'; }, 1000);
+      } catch(e) { state.isCanvasDirty = true; document.getElementById('db-status').innerText = 'Error guardando'; }
+      state.isSavingProcessActive = false; setTimeout(() => { if(!state.isSavingProcessActive && network.connected) document.getElementById('status-indicator').className = 'status-dot online'; }, 1000);
     }
-    setInterval(saveRoomImage, 2000);
+    setInterval(saveRoomImage, 3000);
 
+    // Draggable Modal
+    const modal = document.getElementById('login-modal'); const dragHandle = document.getElementById('modal-drag-handle');
+    let isDragging = false; let offsetX, offsetY;
+    dragHandle.onmousedown = (e) => { isDragging = true; offsetX = e.clientX - modal.offsetLeft; offsetY = e.clientY - modal.offsetTop; };
+    document.onmousemove = (e) => { if(isDragging) { modal.style.left = (e.clientX - offsetX) + 'px'; modal.style.top = (e.clientY - offsetY) + 'px'; modal.style.position = 'absolute'; } };
+    document.onmouseup = () => isDragging = false;
+
+    // Login Inicial
     document.getElementById('btn-connect').onclick = async () => {
       const user = document.getElementById('net-username').value.trim(); const room = document.getElementById('net-room').value.trim();
-      if (!user || !room) { alert("Completa los datos crack."); return; }
-      executeClear(); await loadRoomImage(room); network.connect(user, room);
+      if (!user || !room) { alert("Completa tu nombre y sala crack."); return; }
+      
+      // Guardar en LocalStorage
+      localStorage.setItem('paint_user', user);
+      localStorage.setItem('paint_room', room);
+      // el cursor se guarda automáticamente en su propia función
+      
+      ctx.fillStyle = state.color2; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      await loadRoomImage(room); network.connect(user, room);
     };
 
-    executeClear();
+    ctx.fillStyle = state.color2; ctx.fillRect(0, 0, canvas.width, canvas.height);
   </script>
 </body>
 </html>
